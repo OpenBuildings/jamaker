@@ -41,15 +41,15 @@ abstract class Kohana_Jamaker {
 	}
 
 	/**
-	 * Automatically include files tests/test_data/jamakers.php and tests/test_data/jamakers/*.php
+	 * Automatically include files tests/test_data/jamaker.php and tests/test_data/jamaker/*.php
 	 * @return NULL
 	 */
 	static public function autoload()
 	{
 		if ( ! Jamaker::$autoloaded)
 		{
-			$jamakers = Kohana::list_files('tests/test_data/jamakers');
-			$jamakers = $jamakers + Kohana::find_file('tests/test_data', 'jamakers', NULL, TRUE);
+			$jamakers = Kohana::list_files('tests/test_data/jamaker');
+			$jamakers = $jamakers + Kohana::find_file('tests/test_data', 'jamaker', NULL, TRUE);
 			foreach ($jamakers as $jamaker_file) 
 			{
 				require_once $jamaker_file;

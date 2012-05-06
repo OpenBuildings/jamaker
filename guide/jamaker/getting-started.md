@@ -31,11 +31,11 @@ Attempting to define multiple factories with the same name will raise an error.
 Factories can be defined anywhere, but will be automatically loaded if they
 are defined in files at the following locations:
 
-	APPPATH/tests/test_data/jamakers.php
-	MODPATH/{module name}/tests/test_data/jamakers.php
+	APPPATH/tests/test_data/jamaker.php
+	MODPATH/{module name}/tests/test_data/jamaker.php
 
-	APPPATH/tests/test_data/jamakers/*.php
-	MODPATH/{module name}/tests/test_data/jamakers/*.php
+	APPPATH/tests/test_data/jamaker/*.php
+	MODPATH/{module name}/tests/test_data/jamaker/*.php
 
 Using factories
 ---------------
