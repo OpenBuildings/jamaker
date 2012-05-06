@@ -1,5 +1,13 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
+/**
+ * Basic attribute - holds a single static value
+ *
+ * @package    Jamaker
+ * @author     Ivan Kerin
+ * @license    http://www.opensource.org/licenses/isc-license.txt
+ */
+
 class Kohana_Jamaker_Attribute_Static extends Jamaker_Attribute {
 
 	protected $value;
@@ -9,7 +17,7 @@ class Kohana_Jamaker_Attribute_Static extends Jamaker_Attribute {
 		$this->value = $value;
 	}
 
-	public function generate()
+	public function generate($attributes = NULL)
 	{
 		return $this->value;
 	}

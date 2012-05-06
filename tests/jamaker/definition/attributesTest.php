@@ -6,7 +6,7 @@
  * @group   jamaker.definition
  * @group   jamaker.definition.attributes
  */
-class Maker_Definition_AttributesTest extends Unittest_Maker_TestCase {
+class Jamaker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 
 	public function provider_static()
 	{
@@ -22,7 +22,7 @@ class Maker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 	 */
 	public function test_static($attributes)
 	{
-		Jamaker::define('jamaker_user', $attributes);
+		Jamaker::factory('jamaker_user', $attributes);
 
 		$user = Jamaker::build('jamaker_user', array('email' => 'test@example.com'));
 
@@ -33,12 +33,20 @@ class Maker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 
 	public function test_sequence()
 	{
-		$user_maker = Jamaker::define('jamaker_user', array(
+		$user_maker = Jamaker::factory('jamaker_user', array(
+			// Sequence only iterator number
 			'id' => Jamaker::sequence(),
-			'first_name' => Jamaker::sequence('Name$n'),
+
+			// Sequence with initial parameter
+			'first_name' => Jamaker::sequence('Name$n', 10),
+
+			// Sequence of arrays, will loop through them continuously
 			'last_name' => Jamaker::sequence(array('Fam1', 'Fam2', 'Fam3')),
+
+			// Sequence with a callback
 			'email' => Jamaker::sequence(function($n){ return 'me'.$n.'@example.com'; }),
-			'admin' => function($n){ return $n % 2; },
+
+			// Shorthand string sequence
 			'username' => 'user-$n',
 		));
 
@@ -51,76 +59,94 @@ class Maker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 
 		$this->assertAttributes(array(
 			'id' => 1, 
-			'first_name' => 'Name1', 
+			'first_name' => 'Name10', 
 			'last_name' => 'Fam1', 
 			'email' => 'me1@example.com', 
 			'username' => 'user-1', 
-			'admin' => TRUE
 		), $user_maker[0]);
 
 		$this->assertAttributes(array(
 			'id' => 2, 
-			'first_name' => 'Name2', 
+			'first_name' => 'Name11', 
 			'last_name' => 'Fam2', 
 			'email' => 'me2@example.com', 
 			'username' => 'user-2', 
-			'admin' => FALSE
 		), $user_maker[1]);
 
 		$this->assertAttributes(array(
 			'id' => 3, 
-			'first_name' => 'Name3', 
+			'first_name' => 'Name12', 
 			'last_name' => 'Fam3', 
 			'email' => 'me3@example.com', 
 			'username' => 'user-3', 
-			'admin' => TRUE
 		), $user_maker[2]);
 
 		$this->assertAttributes(array(
 			'id' => 4, 
-			'first_name' => 'Name4', 
+			'first_name' => 'Name13', 
 			'last_name' => 'Fam1', 
 			'email' => 'me4@example.com', 
 			'username' => 'user-4', 
-			'admin' => FALSE
 		), $user_maker[3]);
 
 	}
 
+	public function test_dynamic()
+	{
+		Jamaker::factory('jamaker_user', array(
+			'id' => 10,
+			'first_name' => function($attrs){ return $attrs['id'].' clusure'; },
+			'last_name' => 'Jamaker_Definition_AttributesTest::_test_dynamic_call',
+		));
+
+		$user = Jamaker::build('jamaker_user');
+		$this->assertAttributes(array('id' => 10, 'first_name' => '10 clusure', 'last_name' => '10 method 10 clusure' ), $user);
+	}
+
+	static public function _test_dynamic_call($attrs)
+	{
+		return $attrs['id'].' method '.$attrs['first_name'];
+	}
+
 	public function test_association_belongsto()
 	{
-		Jamaker::define('jamaker_user', array(
+		Jamaker::factory('jamaker_user', array(
 			'first_name' => 'John',
 			'last_name' => 'Doe',
 		));
 
-		Jamaker::define('jamaker_invite', array(
+		Jamaker::factory('jamaker_invite', array(
 			'user' => 'jamaker_user',
 		));
 
-		Jamaker::define('jamaker_account', array(
-			'user' => Jamaker::association('jamaker_user', array('strategy' => 'create'))
+		Jamaker::factory('jamaker_account', array(
+			'user' => Jamaker::association('jamaker_user', 'create', array('last_name' => 'Dimo'))
 		));
 
 		$invite = Jamaker::build('jamaker_invite');
-		$this->assertFalse($invite->user->loaded(), 'Should use build strategy by default');
+		$this->assertFalse($invite->user->loaded(), 'Should use build strategy for associations');
+
+		$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Doe'), $invite->user);
+
+		$invite = Jamaker::create('jamaker_invite');
+		$this->assertTrue($invite->user->loaded(), 'Should use create strategy for associations');
 
 		$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Doe'), $invite->user);
 
 		$account = Jamaker::build('jamaker_account');
 
 		$this->assertTrue($account->user->loaded(), 'Should use create strategy as specified');
-		$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Doe'), $account->user);
+		$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Dimo'), $account->user);
 	}
 
 	public function test_association_hasone()
 	{
-		Jamaker::define('jamaker_user', array(
+		Jamaker::factory('jamaker_user', array(
 			'first_name' => 'John',
 			'invite' => 'jamaker_invite'
 		));
 
-		Jamaker::define('jamaker_invite', array(
+		Jamaker::factory('jamaker_invite', array(
 			'email' => 'me@example.com',
 		));
 
@@ -131,7 +157,7 @@ class Maker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 
 	public function test_association_hamany()
 	{
-		Jamaker::define('jamaker_user', array(
+		Jamaker::factory('jamaker_user', array(
 			'_accounts' => 3,
 			'first_name' => 'John',
 			Jamaker::after('build', function($user){
@@ -139,7 +165,7 @@ class Maker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 			})
 		));
 
-		Jamaker::define('jamaker_account', array());
+		Jamaker::factory('jamaker_account', array());
 
 		$user = Jamaker::build('jamaker_user');
 		$user2 = Jamaker::build('jamaker_user', array('_accounts' => 10));

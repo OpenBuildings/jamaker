@@ -1,5 +1,12 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
+/**
+ * A single trait (collection of attributes)
+ *
+ * @package    Jamaker
+ * @author     Ivan Kerin
+ * @license    http://www.opensource.org/licenses/isc-license.txt
+ */
 class Kohana_Jamaker_Trait {
 
 	protected $name;

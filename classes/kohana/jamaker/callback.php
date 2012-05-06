@@ -1,5 +1,12 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
+/**
+ * A callback to be called before / after events (build or create)
+ *
+ * @package    Jamaker
+ * @author     Ivan Kerin
+ * @license    http://www.opensource.org/licenses/isc-license.txt
+ */
 class Kohana_Jamaker_Callback {
 
 	protected $event;

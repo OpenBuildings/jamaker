@@ -1,19 +1,31 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
+/**
+ * Jammaker attribute that returns a differnet predictable value each time.
+ * Could be simple iterated integer, a string with '$n' replaced by the current iteration of even a callback method that gets executed each time. 
+ *
+ * @package    Jamaker
+ * @author     Ivan Kerin
+ * @license    http://www.opensource.org/licenses/isc-license.txt
+ */
 class Kohana_Jamaker_Attribute_Sequence extends Jamaker_Attribute {
 
 	protected $iterator;
-	protected $current = 0;
+	protected $current = 1;
 
-	function __construct($iterator = NULL)
+	function __construct($iterator = NULL, $initial = 1)
 	{
 		$this->iterator = $iterator;
+		$this->current = $initial;
 	}
 
-	public function generate()
+	/**
+	 * Generate the next sequence value
+	 * 
+	 * @return mixed 
+	 */
+	public function generate($attributes = NULL)
 	{
-		$this->current++;
-
 		if ( ! $this->iterator)
 		{
 			$value = $this->current;
@@ -28,8 +40,10 @@ class Kohana_Jamaker_Attribute_Sequence extends Jamaker_Attribute {
 		}
 		elseif (is_callable($this->iterator))
 		{
-			$value = call_user_func($this->iterator, $this->current);
+			$value = call_user_func($this->iterator, $this->current, $attributes);
 		}
+
+		$this->current++;
 
 		return $value;
 	}
