@@ -8,7 +8,7 @@ It is heavily influenced by thoughtbot/factory_girl and implements most of their
 Jelly
 -----
 
-Jamaker is lightly coupled with Jelly. Will add integration with other ORMs in the future.
+Jamaker is lightly coupled with Kohana Jelly. Will add integration with other ORMs in the future.
 
 Download
 --------
@@ -19,7 +19,7 @@ Github: http://github.com/OpenBuildings/jamaker/tree/master
 More Information
 ----------------
 
-[Getting Started](/OpenBuildings/jamaker/blob/master/guide/jamaker/getting-started.md))
+[Getting Started](getting-started.md)
 
 Credits
 -------

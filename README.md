@@ -19,7 +19,7 @@ Github: http://github.com/OpenBuildings/jamaker/tree/master
 More Information
 ----------------
 
-[Getting Started](/OpenBuildings/jamaker/blob/master/guide/jamaker/getting-started.md))
+[Getting Started](/OpenBuildings/jamaker/blob/master/guide/jamaker/getting-started.md)
 
 Credits
 -------
