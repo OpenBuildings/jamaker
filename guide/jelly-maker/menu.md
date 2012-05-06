@@ -1,2 +1,3 @@
-## [Jelly Maker]()
+## [Jamaker]()
 - [Index]()
+- [Getting Started]()
