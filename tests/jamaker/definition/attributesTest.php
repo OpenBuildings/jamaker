@@ -120,7 +120,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 		));
 
 		Jamaker::factory('jamaker_account', array(
-			'user' => Jamaker::association('jamaker_user', 'create', array('last_name' => 'Dimo'))
+			'user' => Jamaker::association('jamaker_user', array('last_name' => 'Dimo'), 'create')
 		));
 
 		$invite = Jamaker::build('jamaker_invite');

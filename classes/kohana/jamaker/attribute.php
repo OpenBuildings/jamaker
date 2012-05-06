@@ -45,7 +45,7 @@ abstract class Kohana_Jamaker_Attribute {
 				}
 				elseif ($maker->meta() AND $maker->meta()->association($name))
 				{
-					$attribute = new Jamaker_Attribute_Association($attribute, $strategy);	
+					$attribute = new Jamaker_Attribute_Association($attribute, array(), $strategy);	
 				}
 				else
 				{

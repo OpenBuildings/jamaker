@@ -228,9 +228,9 @@ abstract class Kohana_Jamaker {
 	 * @param  array  $overrides
 	 * @return Jamaker_Attribute_Association
 	 */
-	static public function association($maker, $strategy = NULL, array $overrides = NULL)
+	static public function association($maker, array $overrides = NULL, $strategy = NULL)
 	{
-		return new Jamaker_Attribute_Association($maker, $strategy, $overrides);
+		return new Jamaker_Attribute_Association($maker, $overrides, $strategy);
 	}
 
 	/**

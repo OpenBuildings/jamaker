@@ -121,7 +121,7 @@ You can also specify a different factories or override attributes:
 ```php
 <?php
 Jamaker::factory('post', array(
-	'author' => Jamaker::association('admin_user', 'build', array('last_name' => 'Nemo'))
+	'author' => Jamaker::association('admin_user', array('last_name' => 'Nemo'), 'build')
 ));
 ?>
 ```

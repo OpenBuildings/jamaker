@@ -13,11 +13,14 @@ class Kohana_Jamaker_Attribute_Association extends Jamaker_Attribute {
 	protected $maker;
 	protected $overrides;
 
-	function __construct($maker, $strategy = NULL, array $overrides = NULL) 
+	function __construct($maker, array $overrides = NULL, $strategy = NULL) 
 	{
 		$this->maker = $maker;
 
-		$this->strategy = $strategy;
+		if ($strategy !== NULL)
+		{
+			$this->strategy = $strategy;
+		}
 
 		$this->overrides = $overrides;
 	}
