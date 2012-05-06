@@ -65,9 +65,6 @@ echo $user->first_name; // 'Joe'
 ?>
 ```
 
-If repeating "FactoryGirl" is too verbose for you, you can mix the syntax methods in:
-
-
 Lazy Attributes
 ---------------
 
@@ -110,6 +107,10 @@ It's possible to set up associations within factories. You specify the name of t
 
 ```php
 <?php
+Jamaker::factory('user', array(
+	// ...
+));
+
 Jamaker::factory('post', array(
 	'author' => 'user'
 ));
@@ -157,7 +158,7 @@ Jamaker::factory('user', array(
 	'name' => 'John Doe',
 
 	Jamaker::factory('user_with_posts', array(
-		// This value does not exit in the database and will not be saved, but we can use it ti pass variables around
+		// This value does not exit in the database and will not be saved, but we can use it to pass variables around
 		'_posts_count' = 5,
 
 		Jamaker::after('create', function($user){
@@ -176,7 +177,7 @@ echo Jamaker::create('user_with_posts', array('_posts_count' => 2))->posts; // J
 Inheritance
 -----------
 
-You can easily define multiple factories for the same class without repeating common attributes by nesting factories:
+You can easily define multiple factories for the same class without repeating common attributes with nesting factories:
 
 ```php
 <?php
@@ -268,6 +269,7 @@ Jamaker::factory('user', array(
 	'email' => Jamaker::sequence(array('person@example.com', 'nemi@example.com', 'colio@example.com'))
 ));
 ?>
+```
 
 You can also override the initial value:
 
@@ -407,7 +409,7 @@ Jamaker::create('user', array('male', 'admin'));
 ?>
 ```
 
-This ability works with `build`, `build_stubbed` and `attributes_for`.
+This ability works with `build`, `create` and `attributes_for`.
 
 `create_list` and `build_list` methods are supported as well. Just remember to pass the number of instances to create/build as second parameter, as documented in the "Building or Creating Multiple Records" section of this file.
 
