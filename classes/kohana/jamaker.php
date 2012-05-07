@@ -368,7 +368,11 @@ abstract class Kohana_Jamaker {
 			$this->_initialized = TRUE;
 
 			// Convert attributes to Jamaker_Attribute objects
-			$this->attributes = Arr::merge($attributes, Jamaker_Attribute::convert_all($this, $this->attributes));
+			$this->attributes = Jamaker_Attribute::convert_all($this, $this->attributes); 
+
+			// Add attributes from parent that are missing in the child, keeping correct order
+			$this->attributes = $this->attributes + array_diff_key($attributes, $this->attributes);
+
 		}
 		return $this;
 	}
