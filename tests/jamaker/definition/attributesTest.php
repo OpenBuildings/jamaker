@@ -48,6 +48,8 @@ class Jamaker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 
 			// Shorthand string sequence
 			'username' => 'user-$n',
+
+			'admin' => array(TRUE, FALSE)
 		));
 
 		$user_maker = array(
@@ -63,6 +65,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 			'last_name' => 'Fam1', 
 			'email' => 'me1@example.com', 
 			'username' => 'user-1', 
+			'admin' => TRUE, 
 		), $user_maker[0]);
 
 		$this->assertAttributes(array(
@@ -71,6 +74,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 			'last_name' => 'Fam2', 
 			'email' => 'me2@example.com', 
 			'username' => 'user-2', 
+			'admin' => FALSE, 
 		), $user_maker[1]);
 
 		$this->assertAttributes(array(
@@ -79,6 +83,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 			'last_name' => 'Fam3', 
 			'email' => 'me3@example.com', 
 			'username' => 'user-3', 
+			'admin' => TRUE, 
 		), $user_maker[2]);
 
 		$this->assertAttributes(array(
@@ -87,6 +92,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Maker_TestCase {
 			'last_name' => 'Fam1', 
 			'email' => 'me4@example.com', 
 			'username' => 'user-4', 
+			'admin' => FALSE, 
 		), $user_maker[3]);
 
 	}
