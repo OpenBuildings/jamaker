@@ -39,7 +39,7 @@ abstract class Kohana_Jamaker_Attribute {
 				{
 					$attribute = new Jamaker_Attribute_Dynamic($attribute);	
 				}
-				elseif (is_string($attribute) AND strpos($attribute, '$n') !== FALSE)
+				elseif (is_array($attribute) OR (is_string($attribute) AND strpos($attribute, '$n') !== FALSE))
 				{
 					$attribute = new Jamaker_Attribute_Sequence($attribute);	
 				}
