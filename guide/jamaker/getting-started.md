@@ -15,7 +15,7 @@ Jamaker::factory('user', array(
 	'admin' => FALSE,
 ));
 
-// This will use the User class (Model_Admin would have been guessed)
+// This will use the User class (Model_Admin would be guessed)
 Jamaker::factory('admin', array('class' => 'Model_User'), array(
 	'first_name' => 'Admin',
 	'last_name' => 'User',
