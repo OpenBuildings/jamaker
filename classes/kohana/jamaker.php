@@ -10,10 +10,10 @@
 abstract class Kohana_Jamaker {
 
 	/**
-	 * All the defined jamaker definitions
+	 * All the defined jamaker factories
 	 * @var array
 	 */
-	static protected $definitions = array();
+	static protected $factories = array();
 
 	/**
 	 * Holds all the makers that have saved objects to the database. This is used to later clean them up.
@@ -34,10 +34,10 @@ abstract class Kohana_Jamaker {
 	{
 		Jamaker::autoload();
 
-		if (isset(Jamaker::$definitions[$name]))
+		if (isset(Jamaker::$factories[$name]))
 			throw new Kohana_Exception('Jamaker jamaker_user already defined');
 
-		return Jamaker::$definitions[$name] = new Jamaker($name, $params, $attributes);
+		return Jamaker::$factories[$name] = new Jamaker($name, $params, $attributes);
 	}
 
 	/**
@@ -59,12 +59,23 @@ abstract class Kohana_Jamaker {
 	}
 
 	/**
-	 * Clear all definitions. Useful for testing
+	 * * Clear all definitions. Useful for testing
+	 * @param  array $factories Specifically what factories to remove
 	 * @return NULL
 	 */
-	static public function clear_definitions()
+	static public function clear_factories(array $factories = NULL)
 	{
-		Jamaker::$definitions = array();
+		if ($factories !== NULL)
+		{
+			foreach ($factories as $factory) 
+			{
+				unset(Jamaker::$factories[$factory]);
+			}
+		}
+		else
+		{
+			Jamaker::$factories = array();
+		}
 	}
 
 	/**
@@ -76,7 +87,7 @@ abstract class Kohana_Jamaker {
 		$models = array();
 		foreach (Jamaker::$created as $maker) 
 		{
-			$models[] = Jelly::model_name(Jamaker::get($maker)->item_class());
+			$models[] = Jelly::model_name(Jamaker::factories($maker)->item_class());
 		}
 
 		foreach (array_unique(array_filter($models)) as $model) 
@@ -93,22 +104,27 @@ abstract class Kohana_Jamaker {
 	 * @throws Kohana_Exception If a maker with that name is not defined
 	 * @return Jamaker       
 	 */
-	static public function get($name)
+	static public function factories($name = NULL)
 	{
 		Jamaker::autoload();
 
-		if (is_object($name))
+		if ($name !== NULL)
 		{
-			if ( ! ($name instanceof Jamaker))
-				throw new Kohana_Exception("Must be an instance of Jamaker but was :class", array(':class' => get_class($name)));
+			if (is_object($name))
+			{
+				if ( ! ($name instanceof Jamaker))
+					throw new Kohana_Exception("Must be an instance of Jamaker but was :class", array(':class' => get_class($name)));
 
-			return $name;
+				return $name;
+			}
+
+			if ( ! isset(Jamaker::$factories[$name]))
+				throw new Kohana_Exception('A Jelly Maker with the name ":name" is not defined', array(':name' => $name));
+				
+			return Jamaker::$factories[$name];
 		}
 
-		if ( ! isset(Jamaker::$definitions[$name]))
-			throw new Kohana_Exception('A Jelly Maker with the name ":name" is not defined', array(':name' => $name));
-			
-		return Jamaker::$definitions[$name];
+		return Jamaker::$factories;
 	}
 
 	/**
@@ -119,7 +135,7 @@ abstract class Kohana_Jamaker {
 	 */
 	static public function attributes_for($name, array $overrides = NULL, $strategy = 'build')
 	{
-		return Jamaker::get($name)->attributes($overrides, $strategy);
+		return Jamaker::factories($name)->attributes($overrides, $strategy);
 	}
 
 	/**
@@ -133,7 +149,7 @@ abstract class Kohana_Jamaker {
 	 */
 	static public function generate($strategy, $name, array $overrides = NULL)
 	{
-		$maker = Jamaker::get($name);
+		$maker = Jamaker::factories($name);
 		$class = $maker->item_class();
 		$item = new $class();
 
@@ -351,7 +367,7 @@ abstract class Kohana_Jamaker {
 			// Load class, traits, defined_traits and attributes from the parent
 			if ($this->parent)
 			{
-				$parent = Jamaker::get($this->parent)->initialize();
+				$parent = Jamaker::factories($this->parent)->initialize();
 
 				$this->class = $parent->class;
 				$this->traits = Arr::merge($parent->traits, $this->traits);

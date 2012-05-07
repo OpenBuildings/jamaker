@@ -4,21 +4,24 @@
 /**
  * Unittest Extension to work agianst the testing database
  */
-class Unittest_Maker_TestCase extends Unittest_Database_TestCase {
+class Unittest_Jamaker_TestCase extends Unittest_Database_TestCase {
 
 	static public $database_connection = 30;
+	static public $defined = array();
 
 	public function setUp()
 	{
-		$this->_database_connection = Unittest_Maker_Testcase::$database_connection;
+		$this->_database_connection = Unittest_Jamaker_TestCase::$database_connection;
 		parent::setUp();
 
-		Jamaker::clear_definitions();
+		Unittest_Jamaker_TestCase::$defined = array_keys(Jamaker::factories());
 	}
 
 	public function tearDown()
 	{
 		Jamaker::clear_created();
+		$defined = array_diff(array_keys(Jamaker::factories()), Unittest_Jamaker_TestCase::$defined);
+		Jamaker::clear_factories($defined);
 	}
 
 	public function getDataSet()

@@ -5,7 +5,7 @@
  * @group   jamaker
  * @group   jamaker.generic
  */
-class Jamaker_genericTest extends Unittest_Maker_TestCase {
+class Jamaker_genericTest extends Unittest_Jamaker_TestCase {
 
 	public function test_generic()
 	{

@@ -6,7 +6,7 @@
  * @group   jamaker.definition
  * @group   jamaker.definition.parameters
  */
-class Jamaker_Definition_ParametersTest extends Unittest_Maker_TestCase {
+class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 
 
 	public function test_definition_parameters()
@@ -25,7 +25,7 @@ class Jamaker_Definition_ParametersTest extends Unittest_Maker_TestCase {
 			'last_name' => 'Administrator'
 		));
 
-		$maker = Jamaker::get('admin');
+		$maker = Jamaker::factories('admin');
 
 		$this->assertEquals('model_jamaker_user', $maker->item_class(), 'Should have the proper class');
 		$this->assertEquals('jamaker_user', $maker->parent(), 'Should have the proper parent parameter');

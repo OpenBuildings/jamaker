@@ -6,7 +6,7 @@
  * @group   jamaker.definition
  * @group   jamaker.definition.attributes
  */
-class Jamaker_Definition_AttributesTest extends Unittest_Maker_TestCase {
+class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 
 	public function provider_static()
 	{

@@ -5,7 +5,7 @@
  * @group   jamaker
  * @group   jamaker.methods
  */
-class Jamaker_MethodsTest extends Unittest_Maker_TestCase {
+class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 
 	public function test_duplicate_definition()
 	{
