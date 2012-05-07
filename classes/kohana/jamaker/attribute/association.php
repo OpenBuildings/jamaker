@@ -30,6 +30,6 @@ class Kohana_Jamaker_Attribute_Association extends Jamaker_Attribute {
 	 */
 	public function generate($attributes = NULL)
 	{
-		return Jamaker::generate($this->strategy, $this->maker, $this->overrides);
+		return is_object($this->maker) ? $this->maker : Jamaker::generate($this->strategy, $this->maker, $this->overrides);
 	}
 } // End Role Model
