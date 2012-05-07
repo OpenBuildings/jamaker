@@ -35,7 +35,7 @@ abstract class Kohana_Jamaker {
 		Jamaker::autoload();
 
 		if (isset(Jamaker::$factories[$name]))
-			throw new Kohana_Exception('Jamaker jamaker_user already defined');
+			throw new Kohana_Exception('Jamaker :name already defined', array(':name' => $name));
 
 		return Jamaker::$factories[$name] = new Jamaker($name, $params, $attributes);
 	}

@@ -129,6 +129,12 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 			'user' => Jamaker::association('jamaker_user', array('last_name' => 'Dimo'), 'create')
 		));
 
+		$jamaker_user = Jamaker::build('jamaker_user');
+
+		Jamaker::factory('jamaker_account_static', array('class' => 'Model_Jamaker_User'), array(
+			'user' => $jamaker_user
+		));
+
 		$invite = Jamaker::build('jamaker_invite');
 		$this->assertFalse($invite->user->loaded(), 'Should use build strategy for associations');
 
@@ -143,6 +149,9 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 
 		$this->assertTrue($account->user->loaded(), 'Should use create strategy as specified');
 		$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Dimo'), $account->user);
+
+		$account = Jamaker::build('jamaker_account_static');
+		$this->assertSame($jamaker_user, $account->user, 'Should use assigned object');
 	}
 
 	public function test_association_hasone()
