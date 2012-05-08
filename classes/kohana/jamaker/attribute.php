@@ -13,12 +13,12 @@ abstract class Kohana_Jamaker_Attribute {
 
 	/**
 	 * Convert an array of attributes with shorthands for traits and attributes to a clean array of Jamaker_Attribute objects
-	 * @param  Jamaker $maker     The context maker
+	 * @param  Jamaker $factory     The context maker
 	 * @param  array $attributes 
 	 * @param  string $strategy   The current build strategy
 	 * @return array             
 	 */
-	static public function convert_all($maker, $attributes, $strategy = 'build')
+	static public function convert_all($factory, $attributes, $strategy = 'build')
 	{
 		$converted = array();
 
@@ -27,8 +27,8 @@ abstract class Kohana_Jamaker_Attribute {
 			// Convert traits by keeping the precedence
 			if (is_numeric($name) AND is_string($attribute))
 			{
-				$trait_attributes = $maker->traits($attribute)->attributes();
-				$converted = Arr::merge($converted, Jamaker_Attribute::convert_all($maker, $trait_attributes, $strategy));
+				$trait_attributes = $factory->traits($attribute)->attributes();
+				$converted = Arr::merge($converted, Jamaker_Attribute::convert_all($factory, $trait_attributes, $strategy));
 				continue;
 			}
 
@@ -43,7 +43,7 @@ abstract class Kohana_Jamaker_Attribute {
 				{
 					$attribute = new Jamaker_Attribute_Sequence($attribute);	
 				}
-				elseif ($maker->meta() AND $maker->meta()->association($name))
+				elseif (is_string($attribute) AND $factory->meta() AND $factory->meta()->association($name))
 				{
 					$attribute = new Jamaker_Attribute_Association($attribute, array(), $strategy);	
 				}

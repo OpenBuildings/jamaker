@@ -20,7 +20,6 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 			'first_name' => 'John', 
 			'last_name' => 'Doe',
 		));
-
 	}
 
 	public function test_build()
@@ -90,19 +89,23 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 		Jamaker::factory('jamaker_user', array(
 			'first_name' => 'John', 
 			'last_name' => 'Doe',
+			'username' => 'doe',
 		));
 
-		$users = Jamaker::build_list('jamaker_user', 10, array('email' => 'test@example.com', 'last_name' => 'Oliver'));
+		$usernames = array('username1', 'username2', 'username3', 'username4', 'username5', 'username6', 'username7', 'username8', 'username9', 'username10');
+
+		$users = Jamaker::build_list('jamaker_user', 10, array('email' => 'test@example.com', 'last_name' => 'Oliver', 'username' => $usernames));
 
 		$this->assertCount(10, $users, 'Should build 10 users objects');
 
-		foreach ($users as $user) 
+		foreach ($users as $i => $user) 
 		{
 			$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jelly_Model object');
 			$this->assertFalse($user->loaded(), 'User should be loaded with build_list');
-			$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Oliver', 'email' => 'test@example.com'), $user, 'Should set attributes for build_list, and use overrides');
+			$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Oliver', 'email' => 'test@example.com', 'username' => $usernames[$i]), $user, 'Should set attributes for build_list, and use overrides');
 		}
 	}
+
 
 	public function test_create_list()
 	{

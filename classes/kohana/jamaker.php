@@ -85,9 +85,9 @@ abstract class Kohana_Jamaker {
 	static public function clear_created()
 	{
 		$models = array();
-		foreach (Jamaker::$created as $maker) 
+		foreach (Jamaker::$created as $factory) 
 		{
-			$models[] = Jelly::model_name(Jamaker::factories($maker)->item_class());
+			$models[] = Jelly::model_name(Jamaker::factories($factory)->item_class());
 		}
 
 		foreach (array_unique(array_filter($models)) as $model) 
@@ -149,25 +149,26 @@ abstract class Kohana_Jamaker {
 	 */
 	static public function generate($strategy, $name, array $overrides = NULL)
 	{
-		$maker = Jamaker::factories($name);
-		$class = $maker->item_class();
+		$factory = Jamaker::factories($name);
+		$class = $factory->item_class();
 		$item = new $class();
 
-		foreach ($maker->attributes($overrides, $strategy) as $attribute_name => $value) 
+		foreach ($factory->attributes($overrides, $strategy) as $attribute_name => $value) 
 		{
 			$item->$attribute_name = $value;
 		}
 		
-		$maker->events()->trigger('build.after', $item, array($maker, $strategy));
+		$factory->events()->trigger('build.after', $item, array($factory, $strategy));
+
 		if ($strategy == 'create')
 		{
 			Jamaker::$created[] = $name;
 
-			$maker->events()->trigger('create.before', $item, array($maker, $strategy));
+			$factory->events()->trigger('create.before', $item, array($factory, $strategy));
 
 			$item->save();
 
-			$maker->events()->trigger('create.after', $item, array($maker, $strategy));
+			$factory->events()->trigger('create.after', $item, array($factory, $strategy));
 		}
 		return $item;
 	}
@@ -176,77 +177,84 @@ abstract class Kohana_Jamaker {
 	 * Generate a list of items, based on a template.
 	 * 
 	 * @param  string $strategy  'build' or 'create'
-	 * @param  string $name      The name of the definition to use
+	 * @param  string $factory   The name of the definition to use, or the actual factory itself
 	 * @param  integer $count    How many objects to generate based on this definition
 	 * @param  array  $overrides use this to apply last-minute attributes to the generated item. Will overwrite any previous attributes with the same names
 	 * @return array             an array of item objects
 	 */
-	static public function generate_list($strategy, $name, $count, array $overrides = NULL)
+	static public function generate_list($strategy, $factory, $count, array $overrides = NULL)
 	{
 		$list = array();
+
+		if ($overrides)
+		{
+			$factory = Jamaker::factories($factory)->initialize();
+			$overrides = Jamaker_Attribute::convert_all($factory, $overrides, $strategy);
+		}
+
 		foreach (range(1, $count) as $i) 
 		{
-			$list[] = Jamaker::generate($strategy, $name, $overrides);
+			$list[] = Jamaker::generate($strategy, $factory, $overrides);
 		}
 		return $list;
 	}
 
 	/**
 	 * Shorthand for Jamaker::generate('build', $name, $overrides);
-	 * @param  string $name
+	 * @param  string $factory
 	 * @param  array  $overrides 
 	 * @return mixed
 	 */
-	static public function build($name, array $overrides = NULL)
+	static public function build($factory, array $overrides = NULL)
 	{
-		return Jamaker::generate('build', $name, $overrides);
+		return Jamaker::generate('build', $factory, $overrides);
 	}
 
 	/**
-	 * Shorthand for Jamaker::generate('create', $name, $overrides);
-	 * @param  string $name
+	 * Shorthand for Jamaker::generate('create', $factory, $overrides);
+	 * @param  string $factory
 	 * @param  array  $overrides 
 	 * @return mixed
 	 */
-	static public function create($name, array $overrides = NULL)
+	static public function create($factory, array $overrides = NULL)
 	{
-		return Jamaker::generate('create', $name, $overrides);
+		return Jamaker::generate('create', $factory, $overrides);
 	}
 
 	/**
-	 * Shorthand for Jamaker::build_list('build', $name, $count, $overrides);
-	 * @param  string  $name
+	 * Shorthand for Jamaker::build_list('build', $factory, $count, $overrides);
+	 * @param  string  $factory
 	 * @param  integer $count
 	 * @param  array   $overrides 
 	 * @return mixed
 	 */
-	static public function build_list($name, $count, array $overrides = NULL)
+	static public function build_list($factory, $count, array $overrides = NULL)
 	{
-		return Jamaker::generate_list('build', $name, $count, $overrides);
+		return Jamaker::generate_list('build', $factory, $count, $overrides);
 	}
 
 	/**
-	 * Shorthand for Jamaker::create_list('build', $name, $count, $overrides);
-	 * @param  string  $name
+	 * Shorthand for Jamaker::create_list('build', $factory, $count, $overrides);
+	 * @param  string  $factory
 	 * @param  integer $count
 	 * @param  array   $overrides 
 	 * @return mixed
 	 */
-	static public function create_list($name, $count, $overrides = NULL)
+	static public function create_list($factory, $count, $overrides = NULL)
 	{
-		return Jamaker::generate_list('create', $name, $count, $overrides);
+		return Jamaker::generate_list('create', $factory, $count, $overrides);
 	}
 
 	/**
-	 * Shorthand for new Jamaker_Attribute_Association($maker, $strategym $overrides);
-	 * @param  string  $maker
+	 * Shorthand for new Jamaker_Attribute_Association($factory, $strategym $overrides);
+	 * @param  string  $factory
 	 * @param  string  $strategy build or create
 	 * @param  array  $overrides
 	 * @return Jamaker_Attribute_Association
 	 */
-	static public function association($maker, array $overrides = NULL, $strategy = NULL)
+	static public function association($factory, array $overrides = NULL, $strategy = NULL)
 	{
-		return new Jamaker_Attribute_Association($maker, $overrides, $strategy);
+		return new Jamaker_Attribute_Association($factory, $overrides, $strategy);
 	}
 
 	/**
@@ -258,6 +266,26 @@ abstract class Kohana_Jamaker {
 	static public function sequence($iterator = NULL, $initial = 1)
 	{
 		return new Jamaker_Attribute_Sequence($iterator, $initial);
+	}
+
+	/**
+	 * Shorthand for new Jamaker_Attribute_Dynamic($iterator);
+	 * @param  function   $closure
+	 * @return Jamaker_Attribute_Dynamic
+	 */
+	static public function dynamic_value($closure)
+	{
+		return new Jamaker_Attribute_Dynamic($closure);
+	}
+
+	/**
+	 * Shorthand for new Jamaker_Attribute_Static($value);
+	 * @param  mixed   $value
+	 * @return Jamaker_Attribute_Sequence
+	 */
+	static public function static_value($value)
+	{
+		return new Jamaker_Attribute_Static($value);
 	}
 
 	/**

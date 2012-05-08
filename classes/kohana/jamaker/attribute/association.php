@@ -10,12 +10,12 @@
 class Kohana_Jamaker_Attribute_Association extends Jamaker_Attribute {
 
 	protected $strategy = 'build';
-	protected $maker;
+	protected $factory;
 	protected $overrides;
 
-	function __construct($maker, array $overrides = NULL, $strategy = NULL) 
+	function __construct($factory, array $overrides = NULL, $strategy = NULL) 
 	{
-		$this->maker = $maker;
+		$this->factory = $factory;
 
 		if ($strategy !== NULL)
 		{
@@ -30,6 +30,6 @@ class Kohana_Jamaker_Attribute_Association extends Jamaker_Attribute {
 	 */
 	public function generate($attributes = NULL)
 	{
-		return is_object($this->maker) ? $this->maker : Jamaker::generate($this->strategy, $this->maker, $this->overrides);
+		return Jamaker::generate($this->strategy, $this->factory, $this->overrides);
 	}
 } // End Role Model
