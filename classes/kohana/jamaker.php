@@ -158,16 +158,16 @@ abstract class Kohana_Jamaker {
 			$item->$attribute_name = $value;
 		}
 		
-		$maker->events()->trigger('build.after', $item, array($maker));
+		$maker->events()->trigger('build.after', $item, array($maker, $strategy));
 		if ($strategy == 'create')
 		{
 			Jamaker::$created[] = $name;
 
-			$maker->events()->trigger('create.before', $item, array($maker));
+			$maker->events()->trigger('create.before', $item, array($maker, $strategy));
 
 			$item->save();
 
-			$maker->events()->trigger('create.after', $item, array($maker));
+			$maker->events()->trigger('create.after', $item, array($maker, $strategy));
 		}
 		return $item;
 	}
