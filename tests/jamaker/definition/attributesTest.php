@@ -131,7 +131,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 
 		$jamaker_user = Jamaker::build('jamaker_user');
 
-		Jamaker::factory('jamaker_account_static', array('class' => 'Model_Jamaker_User'), array(
+		Jamaker::define('jamaker_account_static', array('class' => 'Model_Jamaker_User'), array(
 			'user' => $jamaker_user
 		));
 
