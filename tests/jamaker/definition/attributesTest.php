@@ -22,7 +22,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 	 */
 	public function test_static($attributes)
 	{
-		Jamaker::factory('jamaker_user', $attributes);
+		Jamaker::define('jamaker_user', $attributes);
 
 		$user = Jamaker::build('jamaker_user', array('email' => 'test@example.com'));
 
@@ -33,7 +33,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 
 	public function test_sequence()
 	{
-		$user_maker = Jamaker::factory('jamaker_user', array(
+		$user_maker = Jamaker::define('jamaker_user', array(
 			// Sequence only iterator number
 			'id' => Jamaker::sequence(),
 
@@ -99,7 +99,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 
 	public function test_dynamic()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'id' => 10,
 			'first_name' => function($attrs){ return $attrs['id'].' clusure'; },
 			'last_name' => 'Jamaker_Definition_AttributesTest::_test_dynamic_call',
@@ -116,16 +116,16 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 
 	public function test_association_belongsto()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John',
 			'last_name' => 'Doe',
 		));
 
-		Jamaker::factory('jamaker_invite', array(
+		Jamaker::define('jamaker_invite', array(
 			'user' => 'jamaker_user',
 		));
 
-		Jamaker::factory('jamaker_account', array(
+		Jamaker::define('jamaker_account', array(
 			'user' => Jamaker::association('jamaker_user', array('last_name' => 'Dimo'), 'create')
 		));
 
@@ -147,12 +147,12 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 
 	public function test_association_hasone()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John',
 			'invite' => 'jamaker_invite'
 		));
 
-		Jamaker::factory('jamaker_invite', array(
+		Jamaker::define('jamaker_invite', array(
 			'email' => 'me@example.com',
 		));
 
@@ -163,7 +163,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 
 	public function test_association_hamany()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'_accounts' => 3,
 			'first_name' => 'John',
 			Jamaker::after('build', function($user){
@@ -171,7 +171,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 			})
 		));
 
-		Jamaker::factory('jamaker_account', array());
+		Jamaker::define('jamaker_account', array());
 
 		$user = Jamaker::build('jamaker_user');
 		$user2 = Jamaker::build('jamaker_user', array('_accounts' => 10));

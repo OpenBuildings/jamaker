@@ -9,7 +9,7 @@ class Jamaker_genericTest extends Unittest_Jamaker_TestCase {
 
 	public function test_generic()
 	{
-		Jamaker::factory('generic_user', array(
+		Jamaker::define('generic_user', array(
 			'_accounts' => 3,
 			'first_name' => 'John',
 			'admin',
@@ -21,7 +21,7 @@ class Jamaker_genericTest extends Unittest_Jamaker_TestCase {
 			})
 		));
 
-		Jamaker::factory('generic_account', array(
+		Jamaker::define('generic_account', array(
 			'total' => 10
 		));
 

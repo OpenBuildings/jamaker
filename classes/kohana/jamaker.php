@@ -30,7 +30,7 @@ abstract class Kohana_Jamaker {
 	 * @param  array $attributes  
 	 * @return Jamaker             
 	 */
-	static public function factory($name, array $params, $attributes = NULL)
+	static public function define($name, array $params, $attributes = NULL)
 	{
 		Jamaker::autoload();
 
@@ -87,7 +87,7 @@ abstract class Kohana_Jamaker {
 		$models = array();
 		foreach (Jamaker::$created as $factory) 
 		{
-			$models[] = Jelly::model_name(Jamaker::factories($factory)->item_class());
+			$models[] = Jelly::model_name(Jamaker::facotries($factory)->item_class());
 		}
 
 		foreach (array_unique(array_filter($models)) as $model) 
@@ -135,7 +135,7 @@ abstract class Kohana_Jamaker {
 	 */
 	static public function attributes_for($name, array $overrides = NULL, $strategy = 'build')
 	{
-		return Jamaker::factories($name)->attributes($overrides, $strategy);
+		return Jamaker::facotries($name)->attributes($overrides, $strategy);
 	}
 
 	/**
@@ -149,7 +149,7 @@ abstract class Kohana_Jamaker {
 	 */
 	static public function generate($strategy, $name, array $overrides = NULL)
 	{
-		$factory = Jamaker::factories($name);
+		$factory = Jamaker::facotries($name);
 		$class = $factory->item_class();
 		$item = new $class();
 
@@ -188,7 +188,7 @@ abstract class Kohana_Jamaker {
 
 		if ($overrides)
 		{
-			$factory = Jamaker::factories($factory)->initialize();
+			$factory = Jamaker::facotries($factory)->initialize();
 			$overrides = Jamaker_Attribute::convert_all($factory, $overrides, $strategy);
 		}
 
@@ -395,7 +395,7 @@ abstract class Kohana_Jamaker {
 			// Load class, traits, defined_traits and attributes from the parent
 			if ($this->parent)
 			{
-				$parent = Jamaker::factories($this->parent)->initialize();
+				$parent = Jamaker::facotries($this->parent)->initialize();
 
 				$this->class = $parent->class;
 				$this->traits = Arr::merge($parent->traits, $this->traits);

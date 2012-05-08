@@ -11,13 +11,13 @@ class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 
 	public function test_definition_parameters()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John',
 
 			Jamaker::trait('admin', array('admin' => TRUE)),
 		));
 
-		Jamaker::factory('admin', array(
+		Jamaker::define('admin', array(
 			'class' => 'Model_Jamaker_User', 
 			'parent' => 'jamaker_user', 
 			'traits' => 'admin'
@@ -25,24 +25,24 @@ class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 			'last_name' => 'Administrator'
 		));
 
-		$maker = Jamaker::factories('admin');
+		$factory = Jamaker::facotries('admin');
 
-		$this->assertEquals('model_jamaker_user', $maker->item_class(), 'Should have the proper class');
-		$this->assertEquals('jamaker_user', $maker->parent(), 'Should have the proper parent parameter');
-		$this->assertArrayHasKey('admin', $maker->traits(), 'Should have the proper traits parameter');
+		$this->assertEquals('model_jamaker_user', $factory->item_class(), 'Should have the proper class');
+		$this->assertEquals('jamaker_user', $factory->parent(), 'Should have the proper parent parameter');
+		$this->assertArrayHasKey('admin', $factory->traits(), 'Should have the proper traits parameter');
 	}
 
 	public function test_parameters_nested()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John',
 			'last_name' => 'Doe',
 
-			Jamaker::factory('admin', array(
+			Jamaker::define('admin', array(
 				'admin' => TRUE
 			)),
 
-			Jamaker::factory('admin2', array(
+			Jamaker::define('admin2', array(
 				'admin' => TRUE,
 				'email' => 'admin@example.com'
 			))
@@ -63,11 +63,11 @@ class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 
 	public function test_parameters_lazy_loading()
 	{
-		$admin_maker = Jamaker::factory('admin', array('parent' => 'jamaker_user'), array(
+		$admin_factory = Jamaker::define('admin', array('parent' => 'jamaker_user'), array(
 			'admin' => TRUE
 		));
 
-		$user_maker = Jamaker::factory('jamaker_user', array(
+		$user_factory = Jamaker::define('jamaker_user', array(
 			'first_name' => 'John',
 			'last_name' => 'Doe',
 		));
@@ -77,36 +77,36 @@ class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 
 		$this->assertAttributes(array('admin' => FALSE), $user);
 
-		$this->assertEquals('model_jamaker_user', $admin_maker->item_class(), 'Should get class from parent definition');
+		$this->assertEquals('model_jamaker_user', $admin_factory->item_class(), 'Should get class from parent definition');
 		$this->assertAttributes(array('admin' => TRUE), $admin);
 	}
 
 	public function test_definition_traits()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John1',
 
 			Jamaker::trait('admin', array('admin' => TRUE)),
 			Jamaker::trait('family', array('last_name' => 'Soprano')),
 			
-			Jamaker::factory('admin_user', array('traits' => 'admin'), array(
+			Jamaker::define('admin_user', array('traits' => 'admin'), array(
 				'first_name' => 'John2'
 			)),
 
-			Jamaker::factory('family_user', array('traits' => 'family'), array(
+			Jamaker::define('family_user', array('traits' => 'family'), array(
 				'first_name' => 'John3'
 			)),
 
-			Jamaker::factory('family_user_short', array(
+			Jamaker::define('family_user_short', array(
 				'family',
 				'first_name' => 'John3'
 			)),
 
-			Jamaker::factory('admin_family_user', array('traits' => array('admin', 'family')), array(
+			Jamaker::define('admin_family_user', array('traits' => array('admin', 'family')), array(
 				'first_name' => 'John4'
 			)),
 
-			Jamaker::factory('admin_family_user_short', array(
+			Jamaker::define('admin_family_user_short', array(
 				'admin',
 				'family',
 				'first_name' => 'John4'
@@ -144,17 +144,17 @@ class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 
 	public function test_trait_precedence()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'Joe',
 
 			Jamaker::trait('admin', array('first_name' => 'Admin')),
 
-			Jamaker::factory('admin_user', array(
+			Jamaker::define('admin_user', array(
 				'first_name' => 'Admin Overwritten',
 				'admin',
 			)),
 			
-			Jamaker::factory('admin_john', array(
+			Jamaker::define('admin_john', array(
 				'admin',
 				'first_name' => 'John Admin'
 			)),
@@ -175,7 +175,7 @@ class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 	{
 		$param = 0;
 
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John',
 		
 			Jamaker::after('build', function($user) use ( & $param) {

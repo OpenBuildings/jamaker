@@ -14,13 +14,13 @@ class Unittest_Jamaker_TestCase extends Unittest_Database_TestCase {
 		$this->_database_connection = Unittest_Jamaker_TestCase::$database_connection;
 		parent::setUp();
 
-		Unittest_Jamaker_TestCase::$defined = array_keys(Jamaker::factories());
+		Unittest_Jamaker_TestCase::$defined = array_keys(Jamaker::facotries());
 	}
 
 	public function tearDown()
 	{
 		Jamaker::clear_created();
-		$defined = array_diff(array_keys(Jamaker::factories()), Unittest_Jamaker_TestCase::$defined);
+		$defined = array_diff(array_keys(Jamaker::facotries()), Unittest_Jamaker_TestCase::$defined);
 		Jamaker::clear_factories($defined);
 	}
 

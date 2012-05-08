@@ -9,14 +9,14 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 
 	public function test_duplicate_definition()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John', 
 			'last_name' => 'Doe',
 		));
 
 		$this->setExpectedException('Kohana_Exception', 'Jamaker jamaker_user already defined');
 		
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John', 
 			'last_name' => 'Doe',
 		));
@@ -25,7 +25,7 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 	public function test_build()
 	{
 		$called_methods = array();
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John', 
 			'last_name' => 'Doe',
 
@@ -56,7 +56,7 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 	public function test_create()
 	{
 		$called_methods = array();
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John', 
 			'last_name' => 'Doe',
 
@@ -86,7 +86,7 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 
 	public function test_build_list()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John', 
 			'last_name' => 'Doe',
 			'username' => 'doe',
@@ -109,7 +109,7 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 
 	public function test_create_list()
 	{
-		Jamaker::factory('jamaker_user', array(
+		Jamaker::define('jamaker_user', array(
 			'first_name' => 'John', 
 			'last_name' => 'Doe',
 		));
