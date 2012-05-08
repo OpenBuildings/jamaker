@@ -25,7 +25,7 @@ class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 			'last_name' => 'Administrator'
 		));
 
-		$factory = Jamaker::facotries('admin');
+		$factory = Jamaker::factories('admin');
 
 		$this->assertEquals('model_jamaker_user', $factory->item_class(), 'Should have the proper class');
 		$this->assertEquals('jamaker_user', $factory->parent(), 'Should have the proper parent parameter');
