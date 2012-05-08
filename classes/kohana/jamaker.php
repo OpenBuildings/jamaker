@@ -30,7 +30,7 @@ abstract class Kohana_Jamaker {
 	 * @param  array $attributes  
 	 * @return Jamaker             
 	 */
-	static public function factory($name, array $params, $attributes = NULL)
+	static public function define($name, array $params, $attributes = NULL)
 	{
 		Jamaker::autoload();
 

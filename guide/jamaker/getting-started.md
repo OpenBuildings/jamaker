@@ -9,14 +9,14 @@ Each factory has a name and a set of attributes. The name is used to guess the c
 ```php
 <?php
 // This will guess the Model_User class
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'first_name' => 'John',
 	'last_name' => 'Doe',
 	'admin' => FALSE,
 ));
 
 // This will use the User class (Model_Admin would have beeen guessed)
-Jamaker::factory('admin', array('class' => 'Model_User'), array(
+Jamaker::define('admin', array('class' => 'Model_User'), array(
 	'first_name' => 'Admin',
 	'last_name' => 'User',
 	'admin' => TRUE,
@@ -72,7 +72,7 @@ Most factory attributes can be added using static values that are evaluated when
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	// ...
 	'title' => 'Title',
 	'activation_code' => function(){ return Model_User::generate_activation_code(); },
@@ -86,7 +86,7 @@ Dependent Attributes
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'first_name' => 'Joe',
 	'last_name' => 'Blow'
 	'email' => function($attrs) { return strtolower($attrs['first_name'].'.'.$attrs['last_name'].'@example.com') }
@@ -107,11 +107,11 @@ It's possible to set up associations within factories. You specify the name of t
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	// ...
 ));
 
-Jamaker::factory('post', array(
+Jamaker::define('post', array(
 	'author' => 'user'
 ));
 ?>
@@ -121,7 +121,7 @@ You can also specify a different factories or override attributes:
 
 ```php
 <?php
-Jamaker::factory('post', array(
+Jamaker::define('post', array(
 	'author' => Jamaker::association('admin_user', array('last_name' => 'Nemo'), 'build')
 ));
 ?>
@@ -149,15 +149,15 @@ Generating data for a `hasmany` relationship is a bit more involved, depending o
 <?php
 
 // post factory with a `belongsto` association for the user
-Jamaker::factory('post', array(
+Jamaker::define('post', array(
 	'title' => 'Through the Looking Glass',
 	'user' => 'user',
 ));
 
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'name' => 'John Doe',
 
-	Jamaker::factory('user_with_posts', array(
+	Jamaker::define('user_with_posts', array(
 		// This value does not exit in the database and will not be saved, but we can use it to pass variables around
 		'_posts_count' = 5,
 
@@ -181,10 +181,10 @@ You can easily define multiple factories for the same class without repeating co
 
 ```php
 <?php
-Jamaker::factory('post', array(
+Jamaker::define('post', array(
 	'title' => 'A Title',
 
-	Jamaker::factory('approved_post', array(
+	Jamaker::define('approved_post', array(
 		'approved' = TRUE,
 	));
 ));
@@ -199,11 +199,11 @@ You can also assign the parent explicitly:
 
 ```php
 <?php
-Jamaker::factory('post', array(
+Jamaker::define('post', array(
 	'title' => 'A Title',
 ));
 
-Jamaker::factory('approved_post', array('parent' => 'post'), array(
+Jamaker::define('approved_post', array('parent' => 'post'), array(
 	'approved' = TRUE,
 ));
 ?>
@@ -218,7 +218,7 @@ Unique values in a specific format (for example, e-mail addresses) can be genera
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'name' => 'A User',
 	'email' => Jamaker::sequence(function($n){ return "person{$n}@example.com"; })
 ));
@@ -232,7 +232,7 @@ If you don't pass any callback function, then the sequence will be of just the i
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'id' => Jamaker::sequence()
 ));
 
@@ -245,7 +245,7 @@ For simpler sequences you could also write just a string containing '$n' at the 
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'email' => Jamaker::sequence('person$n@example.com')
 ));
 ?>
@@ -255,7 +255,7 @@ If fact, you can make this even more simpler by just passing a string, containin
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'email' => 'person$n@example.com'
 ));
 ?>
@@ -265,7 +265,7 @@ Another way of defining a sequence is by passing an array. It will loop through 
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'email' => Jamaker::sequence(array('person@example.com', 'nemi@example.com', 'colio@example.com'))
 ));
 ?>
@@ -275,7 +275,7 @@ You can also override the initial value:
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'email' => Jamaker::sequence('person$n@example.com', 1000)
 ));
 ?>
@@ -289,11 +289,11 @@ Traits allow you to group attributes together and then apply them to any factory
 ```php
 <?php
 
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'email' => 'person@example.com'
 ));
 
-Jamaker::factory('story', array(
+Jamaker::define('story', array(
 	'title' => 'My awesome story',
 	'author' => 'user',
 
@@ -311,10 +311,10 @@ Jamaker::factory('story', array(
 		'end_at' => function(){ return strtotime('now')},
 	)),
 
-	Jamaker::factory('week_long_published_story', array('traits' => array('published', 'week_long_publishing')), array()),
-	Jamaker::factory('month_long_published_story', array('traits' => array('published', 'month_long_publishing')), array()),
-	Jamaker::factory('week_long_unpublished_story', array('traits' => array('unpublished', 'week_long_publishing')), array()),
-	Jamaker::factory('month_long_unpublished_story', array('traits' => array('unpublished', 'month_long_publishing')), array()),
+	Jamaker::define('week_long_published_story', array('traits' => array('published', 'week_long_publishing')), array()),
+	Jamaker::define('month_long_published_story', array('traits' => array('published', 'month_long_publishing')), array()),
+	Jamaker::define('week_long_unpublished_story', array('traits' => array('unpublished', 'week_long_publishing')), array()),
+	Jamaker::define('month_long_unpublished_story', array('traits' => array('unpublished', 'month_long_publishing')), array()),
 ));
 ?>
 ```
@@ -323,7 +323,7 @@ Traits can be used as attributes. Any value that does not have a key is consider
 
 ```php
 <?php
-Jamaker::factory('week_long_published_story_with_title', array('parent' => 'story'), array(
+Jamaker::define('week_long_published_story_with_title', array('parent' => 'story'), array(
 	'published',
 	'week_long_publishing',
 	'title' => function($attrs){ return "Publishing that was started at ".$attrs['start_at']; }
@@ -335,7 +335,7 @@ The trait that defines the attribute latest gets precedence.
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'name' => 'Friendly User',
 	'login' => function($attrs){ return $attrs['name']; },
 
@@ -357,10 +357,10 @@ Jamaker::factory('user', array(
 	)),
 
 	// login will be "admin-John Doe"
-	Jamaker::factory('male_admin', array('traits' => array('male', 'admin')), array()),
+	Jamaker::define('male_admin', array('traits' => array('male', 'admin')), array()),
 
 	// login will be "Jane Doe (F)"  
-	Jamaker::factory('female_admin', array('traits' => array('admin', 'female')), array()),
+	Jamaker::define('female_admin', array('traits' => array('admin', 'female')), array()),
 ));
 ?>
 ```
@@ -369,7 +369,7 @@ You can also override individual attributes granted by a trait in subclasses.
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'name' => 'Friendly User',
 	'login' => function($attrs){ return $attrs['name']; },
 
@@ -379,7 +379,7 @@ Jamaker::factory('user', array(
 		'login' => function($attrs){ return $attrs['name'].' (M)'; },
 	)),
 
-	Jamaker::factory('brandon'), array(
+	Jamaker::define('brandon'), array(
 		'male',
 		'name' => 'Brandon'
 	)),
@@ -392,7 +392,7 @@ Traits can also be passed in as overrides when you build the instance.
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'name' => 'Friendly User',
 
 	Jamaker::trait('male', array(
@@ -416,7 +416,7 @@ This ability works with `build`, `create` and `attributes_for`.
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	'name' => 'Friendly User',
 
 	Jamaker::trait('admin', array(
@@ -441,7 +441,7 @@ Examples:
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	Jamaker::after('build', function($user){ Model_User::generate_hashed_password($user); })
 ));
 ?>
@@ -453,7 +453,7 @@ You can also define multiple types of callbacks on the same factory:
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	Jamaker::after('build', function($user){ Model_User::do_something_to($user); }
 	Jamaker::after('create', function($user){ Model_User::do_something_else_to($user); }
 ));
@@ -464,7 +464,7 @@ Factories can also define any number of the same kind of callback.  These callba
 
 ```php
 <?php
-Jamaker::factory('user', array(
+Jamaker::define('user', array(
 	Jamaker::after('create', function(){ this_runs_first() }
 	Jamaker::after('create', function(){ then_this() }
 ));
