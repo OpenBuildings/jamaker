@@ -4,29 +4,33 @@
 /**
  * Unittest Extension to work agianst the testing database
  */
-class Unittest_Jamaker_TestCase extends Unittest_Database_TestCase {
+class Unittest_Jamaker_TestCase extends Unittest_TestCase {
 
 	static public $database_connection = 30;
-	static public $defined = array();
+	public $defined = array();
+	public $cleaner = TRUE;
 
 	public function setUp()
 	{
-		$this->_database_connection = Unittest_Jamaker_TestCase::$database_connection;
 		parent::setUp();
 
-		Unittest_Jamaker_TestCase::$defined = array_keys(Jamaker::factories());
+		if ($this->cleaner)
+		{
+			Jamaker_Cleaner::start(Jamaker_Cleaner::TRUNCATE, Unittest_Jamaker_TestCase::$database_connection);
+		}
+
+		$this->defined = array_keys(Jamaker::factories());
 	}
 
 	public function tearDown()
 	{
-		Jamaker::clear_created();
-		$defined = array_diff(array_keys(Jamaker::factories()), Unittest_Jamaker_TestCase::$defined);
+		$defined = array_diff(array_keys(Jamaker::factories()), $this->defined);
 		Jamaker::clear_factories($defined);
-	}
-
-	public function getDataSet()
-	{
-		return new PHPUnit_Extensions_Database_DataSet_DefaultDataSet();
+		
+		if ($this->cleaner)
+		{
+			Jamaker_Cleaner::clean();
+		}
 	}
 
 	public function assertAttributes($attributes, $item, $message = 'Should match attributes')

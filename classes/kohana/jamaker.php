@@ -15,12 +15,6 @@ abstract class Kohana_Jamaker {
 	 */
 	static protected $factories = array();
 
-	/**
-	 * Holds all the makers that have saved objects to the database. This is used to later clean them up.
-	 * @var array
-	 */
-	static protected $created = array();
-
 	static protected $autoloaded = FALSE;
 
 	/**
@@ -76,26 +70,6 @@ abstract class Kohana_Jamaker {
 		{
 			Jamaker::$factories = array();
 		}
-	}
-
-	/**
-	 * Clear all created objects in the database so far.
-	 * @return NULL 
-	 */
-	static public function clear_created()
-	{
-		$models = array();
-		foreach (Jamaker::$created as $factory) 
-		{
-			$models[] = Jelly::model_name(Jamaker::factories($factory)->item_class());
-		}
-
-		foreach (array_unique(array_filter($models)) as $model) 
-		{
-			Jelly::query($model)->delete();
-		}
-
-		Jamaker::$created = array();
 	}
 
 	/**
@@ -162,8 +136,6 @@ abstract class Kohana_Jamaker {
 
 		if ($strategy == 'create')
 		{
-			Jamaker::$created[] = $name;
-
 			$factory->events()->trigger('create.before', $item, array($factory, $strategy));
 
 			$item->save();
