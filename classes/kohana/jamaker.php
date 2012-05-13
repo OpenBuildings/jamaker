@@ -436,7 +436,7 @@ abstract class Kohana_Jamaker {
 			}
 			elseif ($attribute instanceof Jamaker_Callback) 
 			{
-				$this->_events->bind($attribute->event(), $attribute->callback());
+				$this->add_callback($attribute);
 				unset($this->attributes[$name]);
 			}
 			elseif ($attribute instanceof Jamaker) 
@@ -445,6 +445,11 @@ abstract class Kohana_Jamaker {
 				unset($this->attributes[$name]);
 			}
 		}
+	}
+
+	public function add_callback(Jamaker_Callback $callback)
+	{
+		$this->_events->bind($callback->event(), $callback->callback());
 	}
 
 	/**

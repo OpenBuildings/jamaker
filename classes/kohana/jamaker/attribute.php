@@ -24,7 +24,13 @@ abstract class Kohana_Jamaker_Attribute {
 
 		foreach ($attributes as $name => $attribute)
 		{
-			// Convert traits by keeping the precedence
+			
+			if ($attribute instanceof Jamaker_Callback)
+			{
+				$factory->add_callback($attribute);
+				continue;
+			}
+						// Convert traits by keeping the precedence
 			if (is_numeric($name) AND is_string($attribute))
 			{
 				$trait_attributes = $factory->traits($attribute)->attributes();
@@ -32,7 +38,6 @@ abstract class Kohana_Jamaker_Attribute {
 				continue;
 			}
 
-			// Convert shorthands
 			if ( ! ($attribute instanceof Jamaker_Attribute))
 			{
 				if (is_callable($attribute))
