@@ -24,6 +24,8 @@ abstract class Kohana_Jamaker_Cleaner {
 
 	public static function start($strategy = 'null', $database = 'default')
 	{
+		Kohana::$log->add(Log::DEBUG, 'Jamaker_Cleaner start');
+
 		$allowed_strategies = array(Jamaker_Cleaner::TRUNCATE, Jamaker_Cleaner::DELETE, Jamaker_Cleaner::TRANSACTION, Jamaker_Cleaner::NULL);
 
 		if ( ! in_array($strategy, $allowed_strategies))
