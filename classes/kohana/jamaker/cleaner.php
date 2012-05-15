@@ -89,6 +89,18 @@ abstract class Kohana_Jamaker_Cleaner {
 		}
 	}
 
+	public static function clean_all()
+	{
+		$all_tables = Database::instance(Jamaker_Cleaner::$database)->list_tables();
+		foreach ($all_tables as $table) 
+		{
+			if ($table != 'schema_version')
+			{
+				DB::query(NULL, "TRUNCATE `$table`")->execute(Jamaker_Cleaner::$database);
+			}
+		}
+	}
+
 	public static function clean()
 	{
 		Jamaker_Cleaner::started_insist();
@@ -96,7 +108,7 @@ abstract class Kohana_Jamaker_Cleaner {
 		switch (Jamaker_Cleaner::$strategy) 
 		{
 			case Jamaker_Cleaner::TRANSACTION:
-				Database::instance()->rollback();
+				Database::instance(Jamaker_Cleaner::$database)->rollback();
 			break;
 
 			case Jamaker_Cleaner::TRUNCATE:
