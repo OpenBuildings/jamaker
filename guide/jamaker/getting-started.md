@@ -517,9 +517,9 @@ You can call `clean()` method multiple times after the initial start. The first 
 
 __There are 3 strategies:__
 
-* Jamaker_Cleaner::TRANSACTION - starts a transaction, and then calls "rollback()" on clean. This is very powerful as it guaranties consistent database, and is very fast, however it is not supported by MySQL MyISAM tables, so it might not be an option.
-* Jamaker_Cleaner::TRUNCATE - call TRUNCATE on all tables, where new rows have been inserted. Jamaker_Cleaner hooks into Jelly's builder method and listens for any inserts, so if you insert them with other means (raw sql queries with DB::query calls) the data might not be cleaned.
-* Jamaker_Cleaner::DELETE - the same as TRUNCATE only calls DELETE - might be useful in some cases.
+* `Jamaker_Cleaner::TRANSACTION` - starts a transaction, and then calls "rollback()" on clean. This is very powerful as it guaranties consistent database, and is very fast, however it is not supported by MySQL MyISAM tables, so it might not be an option.
+* `Jamaker_Cleaner::TRUNCATE` - call TRUNCATE on all tables, where new rows have been inserted. Jamaker_Cleaner hooks into Jelly's builder method and listens for any inserts, so if you insert them with other means (raw sql queries with DB::query calls) the data might not be cleaned.
+* `Jamaker_Cleaner::DELETE` - the same as TRUNCATE only calls DELETE - might be useful in some cases.
 
 __Keeping the data__:
 
@@ -527,8 +527,8 @@ if you want to keep the data that has been inserted so far, you can call `Jamake
 
 __Clean the whole database__:
 
-If you want to truncate every table in the database, call `Jamaker_Cleaner::clear_all()`. The only table that will not be truncated is "schema_info"
+If you want to truncate every table in the database, call `Jamaker_Cleaner::clean_a;;()`. The only table that will not be truncated is "schema_info"
 
-__checking start__:
+__Checking start__:
 
 You can check if Jamaker_Cleaner has been started with `Jamaker_Cleaner::started()`. Or you could use `Jamaker_Cleaner::started_insist()`, which will throw an exception if the cleaner has not yet been started.
