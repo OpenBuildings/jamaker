@@ -46,7 +46,7 @@ class Jamaker_cleanerTest extends Unittest_Jamaker_TestCase {
 		// Test persisting records
 		Jelly::query('jamaker_account')->columns(array('id'))->values(array('1'))->insert();
 
-		Jamaker_Cleaner::persist();
+		Jamaker_Cleaner::save();
 		Jamaker_Cleaner::clean();
 
 		$count = Jelly::query('jamaker_account')->count();

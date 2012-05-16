@@ -293,6 +293,14 @@ abstract class Kohana_Jamaker {
 		return new Jamaker_Trait($name, $attributes);
 	}
 
+	static public function lorem($chars)
+	{
+		$text = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n";
+
+		return str_pad('', $chars, $text);
+	}
+
+
 	/**
 	 * Then name of the maker, used to find it
 	 * @var string

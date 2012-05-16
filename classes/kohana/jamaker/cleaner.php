@@ -73,7 +73,7 @@ abstract class Kohana_Jamaker_Cleaner {
 		}
 	}
 
-	public static function persist()
+	public static function save()
 	{
 		Jamaker_Cleaner::started_insist();
 

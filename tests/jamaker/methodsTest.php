@@ -125,5 +125,14 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 			$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Oliver', 'email' => 'test@example.com'), $user, 'Should set attributes for build_list, and use overrides');
 		}
 	}
+
+	public function test_lorem()
+	{
+		$text = Jamaker::lorem(1000);
+		$this->assertInternalType('string', $text, 'Should generate a string');
+
+		$this->assertEquals(1000, strlen($text), 'Should generate string of 1000 chars');
+		$this->assertGreaterThan(1, substr_count($text, 'Lorem ipsum'), 'Should have repeating block of text');
+	}
 }
 

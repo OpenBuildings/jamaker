@@ -7,7 +7,7 @@ class Model_Jamaker_Invite extends Jelly_Model {
 		$meta->db(Unittest_Jamaker_TestCase::$database_connection);
 
 		$meta->associations(array(
-			'user' => Jelly::association('belongsto', array('foreign' => 'jamaker_user', 'inverse_of' => 'invite'))
+			'user' => Jelly::association('belongsto', array('foreign' => 'jamaker_user', 'inverse_of' => 'invite', 'column' => 'user_id'))
 		));
 
 		$meta->fields(array(
