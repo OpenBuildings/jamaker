@@ -24,13 +24,15 @@ abstract class Kohana_Jamaker_Attribute {
 
 		foreach ($attributes as $name => $attribute)
 		{
-			
+			// Extract callbacks and add them back to the factory in the same order	
 			if ($attribute instanceof Jamaker_Callback)
 			{
 				$factory->add_callback($attribute);
 				continue;
 			}
-						// Convert traits by keeping the precedence
+
+			// Extract attributes from traits, 
+			// merging them back to attribtues array in the correct order
 			if (is_numeric($name) AND is_string($attribute))
 			{
 				$trait_attributes = $factory->traits($attribute)->attributes();
@@ -38,20 +40,26 @@ abstract class Kohana_Jamaker_Attribute {
 				continue;
 			}
 
+			// All the attributes that are left 
+			// must be converted to Jamaker_Attribtue objects
 			if ( ! ($attribute instanceof Jamaker_Attribute))
 			{
+				// Methods like array($object, 'method'), 'Class::method', 'some_function_name' or Closure objects
 				if (is_callable($attribute))
 				{
 					$attribute = new Jamaker_Attribute_Dynamic($attribute);	
 				}
+				// Arrays or strings with '$n' in them
 				elseif (is_array($attribute) OR (is_string($attribute) AND strpos($attribute, '$n') !== FALSE))
 				{
 					$attribute = new Jamaker_Attribute_Sequence($attribute);	
 				}
+				// Strings matching association name and jamaker factory
 				elseif (is_string($attribute) AND $factory->meta() AND $factory->meta()->association($name))
 				{
 					$attribute = new Jamaker_Attribute_Association($attribute, array(), $strategy);	
 				}
+				// Everything else
 				else
 				{
 					$attribute = new Jamaker_Attribute_Static($attribute);	
