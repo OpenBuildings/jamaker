@@ -36,7 +36,13 @@ abstract class Kohana_Jamaker_Attribute {
 			if (is_numeric($name) AND is_string($attribute))
 			{
 				$trait_attributes = $factory->traits($attribute)->attributes();
-				$converted = Arr::merge($converted, Jamaker_Attribute::convert_all($factory, $trait_attributes, $strategy));
+				$trait_attributes = Jamaker_Attribute::convert_all($factory, $trait_attributes, $strategy);
+				
+				foreach ($trait_attributes as $name => $attribute) 
+				{
+					unset($converted[$name]);
+				}
+				$converted = $trait_attributes + $converted;
 				continue;
 			}
 
