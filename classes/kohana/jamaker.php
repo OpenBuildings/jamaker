@@ -441,16 +441,16 @@ abstract class Kohana_Jamaker {
 	{
 		$this->initialize();
 
-		$attributes = array();
+		$attributes = $this->attributes;
 
 		$overrides = Jamaker_Attribute::convert_all($this, (array) $overrides, $strategy);
 		
 		foreach ($overrides as $name => $attribute) 
 		{
-			unset($this->attributes[$name]);
+			unset($attributes[$name]);
 		}
 
-		$attributes = $this->attributes + $overrides;
+		$attributes = $attributes + $overrides;
 
 		foreach ($attributes as $name => $value) 
 		{
