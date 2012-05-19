@@ -12,6 +12,7 @@ abstract class Kohana_Jamaker_Cleaner {
 	const TRUNCATE = 'truncate';
 	const DELETE = 'delete';
 	const TRANSACTION = 'transaction';
+	const PURGE = 'purge';
 	const NULL = 'null';
 
 	protected static $strategy;
@@ -24,7 +25,7 @@ abstract class Kohana_Jamaker_Cleaner {
 
 	public static function start($strategy = 'null', $database = 'default')
 	{
-		$allowed_strategies = array(Jamaker_Cleaner::TRUNCATE, Jamaker_Cleaner::DELETE, Jamaker_Cleaner::TRANSACTION, Jamaker_Cleaner::NULL);
+		$allowed_strategies = array(Jamaker_Cleaner::TRUNCATE, Jamaker_Cleaner::DELETE, Jamaker_Cleaner::TRANSACTION, Jamaker_Cleaner::NULL, Jamaker_Cleaner::PURGE);
 
 		if ( ! in_array($strategy, $allowed_strategies))
 			throw new Kohana_Exception('Strategy ":strategy" is not allowed, must be one of :strategies', array(':strategy' => $strategy, ':strategies' => join(', ', $allowed_strategies)));
@@ -121,6 +122,10 @@ abstract class Kohana_Jamaker_Cleaner {
 				{
 					DB::query(NULL, "DELETE FROM `$table`")->execute(Jamaker_Cleaner::$database);
 				}
+			break;
+
+			case Jamaker_Cleaner::PURGE:
+				Jamaker_Cleaner::clean_all();
 			break;
 		}
 		Jamaker_Cleaner::$_tables = array();
