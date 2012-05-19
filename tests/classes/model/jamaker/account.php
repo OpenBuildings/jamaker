@@ -8,10 +8,12 @@ class Model_Jamaker_Account extends Jelly_Model {
 
 		$meta->associations(array(
 			'user' => Jelly::association('belongsto', array('foreign' => 'jamaker_user', 'inverse_of' => 'accounts', 'column' => 'user_id')),
+			'images' => Jelly::association('hasmany', array('foreign' => 'jamaker_image.account_id', 'inverse_of' => 'account')),
 		));
 
 		$meta->fields(array(
-			'id' => Jelly::field('primary')
+			'id' => Jelly::field('primary'),
+			'name' => Jelly::field('string')
 		));
 	}
 }

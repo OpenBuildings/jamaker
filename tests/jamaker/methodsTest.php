@@ -134,5 +134,7 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 		$this->assertEquals(1000, strlen($text), 'Should generate string of 1000 chars');
 		$this->assertGreaterThan(1, substr_count($text, 'Lorem ipsum'), 'Should have repeating block of text');
 	}
+
+	
 }
 

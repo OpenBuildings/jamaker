@@ -165,6 +165,5 @@ class Jamaker_Definition_TraitsTest extends Unittest_Jamaker_TestCase {
 		$this->assertAttributes(array('email' => 'invite@example.com'), $admin->invite); 
 		$this->assertCount(10, $admin->accounts); 
 	}
-
 }
 

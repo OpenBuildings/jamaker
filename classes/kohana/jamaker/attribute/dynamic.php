@@ -26,4 +26,9 @@ class Kohana_Jamaker_Attribute_Dynamic extends Jamaker_Attribute {
 	{
 		return call_user_func($this->callback, $attributes);
 	}
+
+	public function is_callable()
+	{
+		return TRUE;
+	}
 } // End Role Model

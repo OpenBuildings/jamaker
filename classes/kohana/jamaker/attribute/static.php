@@ -21,4 +21,10 @@ class Kohana_Jamaker_Attribute_Static extends Jamaker_Attribute {
 	{
 		return $this->value;
 	}
+
+	public function is_callable()
+	{
+		return FALSE;
+	}
+
 } // End Role Model

@@ -9,13 +9,40 @@
  */
 abstract class Kohana_Jamaker {
 
+	const MAX_RECURSIVE_DEPTH = 50;
+
 	/**
 	 * All the defined jamaker factories
 	 * @var array
 	 */
-	static protected $factories = array();
+	static protected $_factories = array();
 
-	static protected $autoloaded = FALSE;
+	/**
+	 * Autoloading should happen only once, based on this variable
+	 * @var boolean
+	 */
+	static protected $_autoload_performed = FALSE;
+
+	/**
+	 * Used for checking recursive definitions
+	 * @var array
+	 */
+	static protected $_recursive_depth = array();	
+
+	static protected function _check_recursion($name)
+	{
+		if ( ! isset(Jamaker::$_recursive_depth[$name]))
+		{
+			Jamaker::$_recursive_depth[$name] = 0;
+		}
+		if ( ++Jamaker::$_recursive_depth[$name] > Jamaker::MAX_RECURSIVE_DEPTH)
+			throw new Kohana_Exception('Recursive definition detected in :name', array(':name' => $name));
+	}
+
+	static public function _check_recursion_finish($name)
+	{
+		Jamaker::$_recursive_depth[$name] = 0;
+	}
 
 	/**
 	 * Define a Jamaker object
@@ -28,10 +55,10 @@ abstract class Kohana_Jamaker {
 	{
 		Jamaker::autoload();
 
-		if (isset(Jamaker::$factories[$name]))
+		if (isset(Jamaker::$_factories[$name]))
 			throw new Kohana_Exception('Jamaker :name already defined', array(':name' => $name));
 
-		return Jamaker::$factories[$name] = new Jamaker($name, $params, $attributes);
+		return Jamaker::$_factories[$name] = new Jamaker($name, $params, $attributes);
 	}
 
 	/**
@@ -40,35 +67,35 @@ abstract class Kohana_Jamaker {
 	 */
 	static public function autoload()
 	{
-		if ( ! Jamaker::$autoloaded)
+		if ( ! Jamaker::$_autoload_performed)
 		{
 			$jamakers = Kohana::list_files('tests/test_data/jamaker');
 			$jamakers = $jamakers + Kohana::find_file('tests/test_data', 'jamaker', NULL, TRUE);
-			foreach ($jamakers as $jamaker_file) 
+			foreach ($jamakers as $jamaker_file)
 			{
 				require_once $jamaker_file;
 			}
-			Jamaker::$autoloaded = TRUE;
+			Jamaker::$_autoload_performed = TRUE;
 		}
 	}
 
 	/**
 	 * * Clear all definitions. Useful for testing
-	 * @param  array $factories Specifically what factories to remove
+	 * @param  array $_factories Specifically what factories to remove
 	 * @return NULL
 	 */
-	static public function clear_factories(array $factories = NULL)
+	static public function clear_factories(array $_factories = NULL)
 	{
-		if ($factories !== NULL)
+		if ($_factories !== NULL)
 		{
-			foreach ($factories as $factory) 
+			foreach ($_factories as $factory) 
 			{
-				unset(Jamaker::$factories[$factory]);
+				unset(Jamaker::$_factories[$factory]);
 			}
 		}
 		else
 		{
-			Jamaker::$factories = array();
+			Jamaker::$_factories = array();
 		}
 	}
 
@@ -92,13 +119,13 @@ abstract class Kohana_Jamaker {
 				return $name;
 			}
 
-			if ( ! isset(Jamaker::$factories[$name]))
+			if ( ! isset(Jamaker::$_factories[$name]))
 				throw new Kohana_Exception('A Jelly Maker with the name ":name" is not defined', array(':name' => $name));
 				
-			return Jamaker::$factories[$name];
+			return Jamaker::$_factories[$name];
 		}
 
-		return Jamaker::$factories;
+		return Jamaker::$_factories;
 	}
 
 	/**
@@ -127,6 +154,8 @@ abstract class Kohana_Jamaker {
 		$class = $factory->item_class();
 		$item = new $class();
 
+		Jamaker::_check_recursion($factory->name());
+	
 		foreach ($factory->attributes($overrides, $strategy) as $attribute_name => $value) 
 		{
 			$item->$attribute_name = $value;
@@ -142,6 +171,10 @@ abstract class Kohana_Jamaker {
 
 			$factory->events()->trigger('create.after', $item, array($factory, $strategy));
 		}
+
+		// Clear recursive depth checker for this factory name
+		Jamaker::_check_recursion_finish($factory->name());
+
 		return $item;
 	}
 
@@ -452,9 +485,20 @@ abstract class Kohana_Jamaker {
 
 		$attributes = $attributes + $overrides;
 
-		foreach ($attributes as $name => $value) 
+		foreach ($attributes as $name => & $value) 
 		{
-			$attributes[$name] = $value->generate($attributes);
+			if ( ! $value->is_callable())
+			{
+				$value = $value->generate($attributes);
+			}
+		}
+
+		foreach ($attributes as $name => & $value) 
+		{
+			if ($value instanceof Jamaker_Attribute)
+			{
+				$value = $value->generate($attributes);
+			}
 		}
 
 		return $attributes;

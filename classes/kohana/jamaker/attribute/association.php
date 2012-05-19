@@ -32,4 +32,9 @@ class Kohana_Jamaker_Attribute_Association extends Jamaker_Attribute {
 	{
 		return Jamaker::generate($this->strategy, $this->factory, $this->overrides);
 	}
+
+	public function is_callable()
+	{
+		return FALSE;
+	}
 } // End Role Model

@@ -9,7 +9,17 @@
  */
 abstract class Kohana_Jamaker_Attribute {
 
+	/**
+	 * Generate the actual content of the atribute, iterators iterate, callables are called
+	 * @param array $attributes The attributes so far
+	 */
 	abstract public function generate($attributes = NULL);
+
+	/**
+	 * Return if the attribute is callable. Callabales are generated later than non-callables
+	 * @return boolean
+	 */
+	abstract function is_callable();
 
 	/**
 	 * Convert an array of attributes with shorthands for traits and attributes to a clean array of Jamaker_Attribute objects
@@ -18,7 +28,7 @@ abstract class Kohana_Jamaker_Attribute {
 	 * @param  string $strategy   The current build strategy
 	 * @return array             
 	 */
-	static public function convert_all($factory, $attributes, $strategy = 'build')
+	public static function convert_all($factory, $attributes, $strategy = 'build')
 	{
 		$converted = array();
 
@@ -42,12 +52,12 @@ abstract class Kohana_Jamaker_Attribute {
 				{
 					unset($converted[$name]);
 				}
-				$converted = $trait_attributes + $converted;
+				$converted = $converted + $trait_attributes;
 				continue;
 			}
 
 			// All the attributes that are left 
-			// must be converted to Jamaker_Attribtue objects
+			// must be converted to Jamaker_Attribute objects
 			if ( ! ($attribute instanceof Jamaker_Attribute))
 			{
 				// Methods like array($object, 'method'), 'Class::method', 'some_function_name' or Closure objects

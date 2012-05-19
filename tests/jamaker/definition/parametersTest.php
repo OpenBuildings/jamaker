@@ -111,5 +111,88 @@ class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 
 		$this->assertEquals(108, $param, 'Should run 2 build callbacks after build and one create callback after create');
 	}
+
+	public function test_multiple_nested_callbacks()
+	{
+		Jamaker::define('jamaker_image', array(
+			'file' => 'file$n.jpg',
+
+			Jamaker::after('build', function($image){
+				$image->file = 'account_'.$image->account->name.'.jpg';
+			})
+		));
+
+		Jamaker::define('jamaker_invite', array(
+			'email' => 'invite@example.com',
+
+			Jamaker::after('build', function($invite){
+				$invite->email = $invite->user->email;
+			})
+		));
+
+		Jamaker::define('jamaker_account', array(
+			'user' => 'jamaker_normal_user',
+			'name' => function($attrs){ return $attrs['user']->first_name.'_account'; },
+
+			Jamaker::trait('images', array(
+				'_images' => 3,
+				Jamaker::after('build', function($account){
+					$account->images = Jamaker::build_list('jamaker_image', $account->_images, array('creator' => $account->user));
+				})
+			)),
+
+			Jamaker::define('jamaker_account_recursive', array(
+				'user' => 'jamaker_recursive_user',
+			))
+		));
+
+		Jamaker::define('jamaker_user', array(
+			'first_name' => 'Joe',
+			'last_name' => 'error',
+
+			Jamaker::trait('named', array(
+				'last_name' => 'Morgan',
+
+				Jamaker::after('build', function($user){
+					$user->username = $user->email.'_username';
+				})
+			)),
+
+			'email' => function($attrs){ return $attrs['first_name'].$attrs['last_name'].'@example.com'; },
+			'invite' => 'jamaker_invite',
+
+			Jamaker::define('jamaker_normal_user', array(
+				Jamaker::after('build', function($user) {
+					$user->last_name = 'trait last';
+					$user->accounts = Jamaker::build_list('jamaker_account', 10, array('images', '_images' => 10, 'user' => $user));
+				}),
+			)),
+
+			Jamaker::define('jamaker_recursive_user', array(
+
+				// No user set, so will be a recursive definition with jamaker_account
+				Jamaker::after('build', function($user) {
+					$user->last_name = 'trait last';
+					$user->accounts = Jamaker::build_list('jamaker_account_recursive', 10, array('images', '_images' => 10));
+				}),
+			))
+		));
+
+		$user = Jamaker::build('jamaker_normal_user', array('named'));
+
+		$this->assertAttributes(array(
+			'first_name' => 'Joe',
+			'last_name' => 'trait last',
+			'email' => 'JoeMorgan@example.com',
+			'username' => 'JoeMorgan@example.com_username',
+		), $user);
+
+		$this->assertCount(10, $user->accounts);
+		$this->assertSame($user, $user->accounts[1]->images[1]->creator, 'Should be the same object');
+
+		$this->setExpectedException('Kohana_Exception', 'Recursive definition detected in jamaker_recursive_user');
+
+		$user = Jamaker::build('jamaker_recursive_user', array('named'));
+	}
 }
 

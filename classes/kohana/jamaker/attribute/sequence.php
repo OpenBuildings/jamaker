@@ -47,4 +47,10 @@ class Kohana_Jamaker_Attribute_Sequence extends Jamaker_Attribute {
 
 		return $value;
 	}
+
+	public function is_callable()
+	{
+		return is_callable($this->iterator);
+	}
+
 } // End Role Model
