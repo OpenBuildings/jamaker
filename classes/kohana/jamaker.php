@@ -403,6 +403,8 @@ abstract class Kohana_Jamaker {
 	{
 		if ( ! $this->_initialized)
 		{
+			$this->_initialized = TRUE;
+
 			$attributes = array();
 
 			// Load class, traits, defined_traits and attributes from the parent
@@ -421,8 +423,6 @@ abstract class Kohana_Jamaker {
 				$class = Jelly::class_name($this->name);
 				$this->class = class_exists($class) ? $class : 'stdClass';
 			}
-
-			$this->_initialized = TRUE;
 
 			// Convert attributes to Jamaker_Attribute objects
 			$this->attributes = Jamaker_Attribute::convert_all($this, $this->attributes); 
