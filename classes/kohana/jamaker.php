@@ -136,7 +136,9 @@ abstract class Kohana_Jamaker {
 	 */
 	static public function attributes_for($name, array $overrides = NULL, $strategy = 'build')
 	{
-		return Jamaker::factories($name)->attributes($overrides, $strategy);
+		$attributes = Jamaker::factories($name)->attributes($overrides, $strategy);
+		Jamaker_Attribute::extract_callbacks($attributes);
+		return $attributes;
 	}
 
 	/**
@@ -155,21 +157,26 @@ abstract class Kohana_Jamaker {
 		$item = new $class();
 
 		Jamaker::_check_recursion($factory->name());
+
+		$attributes = Jamaker::factories($name)->attributes($overrides, $strategy);
+		$callbacks = Jamaker_Attribute::extract_callbacks($attributes);
+
+		$events = Jamaker_Events::factory($factory->name, $callbacks);
 	
-		foreach ($factory->attributes($overrides, $strategy) as $attribute_name => $value) 
+		foreach ($attributes as $attribute_name => $value) 
 		{
 			$item->$attribute_name = $value;
 		}
 		
-		$factory->events()->trigger('build.after', $item, array($factory, $strategy));
+		$events->trigger('build.after', $item, array($factory, $strategy));
 
 		if ($strategy == 'create')
 		{
-			$factory->events()->trigger('create.before', $item, array($factory, $strategy));
+			$events->trigger('create.before', $item, array($factory, $strategy));
 
 			$item->save();
 
-			$factory->events()->trigger('create.after', $item, array($factory, $strategy));
+			$events->trigger('create.after', $item, array($factory, $strategy));
 		}
 
 		// Clear recursive depth checker for this factory name
@@ -390,8 +397,6 @@ abstract class Kohana_Jamaker {
 		$this->attributes = Arr::merge($this->attributes, (array) Arr::get($params, 'traits'));
 		$this->class = Arr::get($params, 'class');
 
-		$this->_events = new Jelly_Event($this->name);
-
 		$this->_extract_children();
 	}
 
@@ -447,22 +452,12 @@ abstract class Kohana_Jamaker {
 				$this->traits[$attribute->name()] = $attribute;
 				unset($this->attributes[$name]);
 			}
-			elseif ($attribute instanceof Jamaker_Callback) 
-			{
-				$this->add_callback($attribute);
-				unset($this->attributes[$name]);
-			}
 			elseif ($attribute instanceof Jamaker) 
 			{
 				$attribute->parent = $this;
 				unset($this->attributes[$name]);
 			}
 		}
-	}
-
-	public function add_callback(Jamaker_Callback $callback)
-	{
-		$this->_events->bind($callback->event(), $callback->callback());
 	}
 
 	/**
@@ -478,21 +473,18 @@ abstract class Kohana_Jamaker {
 
 		$overrides = Jamaker_Attribute::convert_all($this, (array) $overrides, $strategy);
 		
-		foreach ($overrides as $name => $attribute) 
-		{
-			unset($attributes[$name]);
-		}
+		$attributes = Jamaker_Attribute::merge($attributes, $overrides);
 
-		$attributes = $attributes + $overrides;
-
+		// Generate all static attributes
 		foreach ($attributes as $name => & $value) 
 		{
-			if ( ! $value->is_callable())
+			if (($value instanceof Jamaker_Attribute) AND ! $value->is_callable())
 			{
 				$value = $value->generate($attributes);
 			}
 		}
 
+		// Generate all dinamic attributes
 		foreach ($attributes as $name => & $value) 
 		{
 			if ($value instanceof Jamaker_Attribute)

@@ -112,6 +112,26 @@ class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 		$this->assertEquals(108, $param, 'Should run 2 build callbacks after build and one create callback after create');
 	}
 
+	public function test_trait_callback()
+	{
+		Jamaker::define('jamaker_user', array(
+			'first_name' => 'John',
+
+			Jamaker::trait('test', array(
+				Jamaker::after('build', function($user) {
+					$user->first_name = 'Joe';
+				}),
+			))
+		));
+
+		$user = Jamaker::build('jamaker_user', array('test'));
+		$user_no_trait = Jamaker::build('jamaker_user');
+
+		$this->assertAttributes(array('first_name' => 'Joe'), $user);
+		$this->assertAttributes(array('first_name' => 'John'), $user_no_trait);
+
+	}
+
 	public function test_multiple_nested_callbacks()
 	{
 		Jamaker::define('jamaker_image', array(
