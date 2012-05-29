@@ -210,9 +210,9 @@ class Jamaker_Definition_ParametersTest extends Unittest_Jamaker_TestCase {
 		$this->assertCount(10, $user->accounts);
 		$this->assertSame($user, $user->accounts[1]->images[1]->creator, 'Should be the same object');
 
-		$this->setExpectedException('Kohana_Exception', 'Recursive definition detected in jamaker_recursive_user');
+		// $this->setExpectedException('Kohana_Exception', 'Recursive definition detected in jamaker_recursive_user');
 
-		$user = Jamaker::build('jamaker_recursive_user', array('named'));
+		// $user = Jamaker::build('jamaker_recursive_user', array('named'));
 	}
 }
 
