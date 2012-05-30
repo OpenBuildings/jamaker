@@ -1,3 +1,18 @@
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Getting Started](#getting-started)
+	- [Defining factories](#defining-factories)
+	- [Using factories](#using-factories)
+	- [Lazy Attributes](#lazy-attributes)
+	- [Dependent Attributes](#dependent-attributes)
+	- [Associations](#associations)
+	- [Inheritance](#inheritance)
+	- [Sequences](#sequences)
+	- [Traits](#traits)
+	- [Callbacks](#callbacks)
+	- [Building or Creating Multiple Records](#building-or-creating-multiple-records)
+	- [Jamaker Cleaner](#jamaker-cleaner)
+
 Getting Started
 ===============
 
