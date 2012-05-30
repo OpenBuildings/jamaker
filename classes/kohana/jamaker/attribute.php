@@ -22,6 +22,39 @@ abstract class Kohana_Jamaker_Attribute {
 	abstract function is_callable();
 
 	/**
+	 * Get the callbacks from attributes, and remove them from the array itself
+	 * @param array $attributes 
+	 * @return  array callbacks array
+	 */
+	public static function extract_callbacks(array & $attributes)
+	{
+		$callbacks = array();
+
+		foreach ($attributes as $name => $attribute)
+		{
+			// Extract callbacks and add them back to the factory in the same order	
+			if ($attribute instanceof Jamaker_Callback)
+			{
+				$callbacks[] = $attribute;
+				unset($attributes[$name]);
+			}
+		}
+		return $callbacks;
+	}
+
+	public static function merge(array $array1, array $array2)
+	{
+		foreach ($array2 as $name => $attribute) 
+		{
+			if ( ! is_numeric($name))
+			{
+				unset($array1[$name]);
+			}
+		}
+		return array_merge($array1, $array2);
+	}
+
+	/**
 	 * Convert an array of attributes with shorthands for traits and attributes to a clean array of Jamaker_Attribute objects
 	 * @param  Jamaker $factory     The context maker
 	 * @param  array $attributes 
@@ -34,25 +67,19 @@ abstract class Kohana_Jamaker_Attribute {
 
 		foreach ($attributes as $name => $attribute)
 		{
-			// Extract callbacks and add them back to the factory in the same order	
-			if ($attribute instanceof Jamaker_Callback)
-			{
-				$factory->add_callback($attribute);
-				continue;
-			}
-
 			// Extract attributes from traits, 
 			// merging them back to attribtues array in the correct order
 			if (is_numeric($name) AND is_string($attribute))
 			{
 				$trait_attributes = $factory->traits($attribute)->attributes();
 				$trait_attributes = Jamaker_Attribute::convert_all($factory, $trait_attributes, $strategy);
-				
-				foreach ($trait_attributes as $name => $attribute) 
-				{
-					unset($converted[$name]);
-				}
-				$converted = $converted + $trait_attributes;
+				$converted = Jamaker_Attribute::merge($converted, $trait_attributes);
+				continue;
+			}
+
+			if ($attribute instanceof Jamaker_Callback)
+			{
+				$converted[] = $attribute;
 				continue;
 			}
 
@@ -83,6 +110,7 @@ abstract class Kohana_Jamaker_Attribute {
 			}
 			$converted[$name] = $attribute;
 		}
+
 		return $converted;
 	}
 
