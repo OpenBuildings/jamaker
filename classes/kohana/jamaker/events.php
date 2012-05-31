@@ -1,13 +1,13 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Extension of Jelly Events to handle events cascade
+ * Extension of Jam Events to handle events cascade
  *
  * @package    Jamaker
  * @author     Ivan Kerin
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-class Kohana_Jamaker_Events extends Jelly_Event {
+class Kohana_Jamaker_Events extends Jam_Event {
 
 	public static function factory($name, array $callbacks)
 	{
