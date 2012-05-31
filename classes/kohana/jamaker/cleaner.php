@@ -39,7 +39,7 @@ abstract class Kohana_Jamaker_Cleaner {
 		}
 		elseif ( ! Jamaker_Cleaner::$_bound)
 		{
-			Jelly::global_bind('builder.after_insert', 'Jamaker_Cleaner::log_table');
+			Jam::global_bind('builder.after_insert', 'Jamaker_Cleaner::log_table');
 			Jamaker_Cleaner::$_bound = TRUE;
 		}
 

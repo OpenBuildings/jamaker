@@ -26,7 +26,7 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 
 		$user = Jamaker::build('jamaker_user', array('email' => 'test@example.com'));
 
-		$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jelly_Model object');
+		$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jam_Model object');
 		$this->assertAttributes($attributes, $user);
 		$this->assertEquals('test@example.com', $user->email, 'Should use overrides');
 	}

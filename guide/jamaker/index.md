@@ -5,10 +5,10 @@ Jamaker is a fixtures replacement with a straightforward definition syntax, supp
 
 It is heavily influenced by thoughtbot/factory_girl and implements most of their interface.
 
-Jelly
+Jam
 -----
 
-Jamaker is lightly coupled with Kohana Jelly. Will add integration with other ORMs in the future.
+Jamaker is lightly coupled with Kohana Jam. Will add integration with other ORMs in the future.
 
 Download
 --------

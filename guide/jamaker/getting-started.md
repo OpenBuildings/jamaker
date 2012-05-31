@@ -1,3 +1,18 @@
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Getting Started](#getting-started)
+	- [Defining factories](#defining-factories)
+	- [Using factories](#using-factories)
+	- [Lazy Attributes](#lazy-attributes)
+	- [Dependent Attributes](#dependent-attributes)
+	- [Associations](#associations)
+	- [Inheritance](#inheritance)
+	- [Sequences](#sequences)
+	- [Traits](#traits)
+	- [Callbacks](#callbacks)
+	- [Building or Creating Multiple Records](#building-or-creating-multiple-records)
+	- [Jamaker Cleaner](#jamaker-cleaner)
+
 Getting Started
 ===============
 
@@ -24,7 +39,7 @@ Jamaker::define('admin', array('class' => 'Model_User'), array(
 ?>
 ```
 
-It is highly recommended that you have one factory for each class that provides the simplest set of attributes necessary to create an instance of that class. If you're creating Jelly objects, that means that you should only provide attributes that are required through validations and that do not have defaults. Other factories can be created through inheritance to cover common scenarios for each class.
+It is highly recommended that you have one factory for each class that provides the simplest set of attributes necessary to create an instance of that class. If you're creating Jam objects, that means that you should only provide attributes that are required through validations and that do not have defaults. Other factories can be created through inheritance to cover common scenarios for each class.
 
 Attempting to define multiple factories with the same name will raise an error.
 
@@ -168,9 +183,9 @@ Jamaker::define('user', array(
 ));
 
 
-echo Jamaker::create('user')->posts; // Jelly_Collection: Model_Post(0)
-echo Jamaker::create('user_with_posts')->posts; // Jelly_Collection: Model_Post(5)
-echo Jamaker::create('user_with_posts', array('_posts_count' => 2))->posts; // Jelly_Collection: Model_Post(2)
+echo Jamaker::create('user')->posts; // Jam_Collection: Model_Post(0)
+echo Jamaker::create('user_with_posts')->posts; // Jam_Collection: Model_Post(5)
+echo Jamaker::create('user_with_posts', array('_posts_count' => 2))->posts; // Jam_Collection: Model_Post(2)
 ?>
 ```
 
@@ -518,7 +533,7 @@ You can call `clean()` method multiple times after the initial start. The first 
 __There are 3 strategies:__
 
 * `Jamaker_Cleaner::TRANSACTION` - starts a transaction, and then calls "rollback()" on clean. This is very powerful as it guaranties consistent database, and is very fast, however it is not supported by MySQL MyISAM tables, so it might not be an option.
-* `Jamaker_Cleaner::TRUNCATE` - call TRUNCATE on all tables, where new rows have been inserted. Jamaker_Cleaner hooks into Jelly's builder method and listens for any inserts, so if you insert them with other means (raw sql queries with DB::query calls) the data might not be cleaned.
+* `Jamaker_Cleaner::TRUNCATE` - call TRUNCATE on all tables, where new rows have been inserted. Jamaker_Cleaner hooks into Jam's builder method and listens for any inserts, so if you insert them with other means (raw sql queries with DB::query calls) the data might not be cleaned.
 * `Jamaker_Cleaner::DELETE` - the same as TRUNCATE only calls DELETE - might be useful in some cases.
 
 __Keeping the data__:

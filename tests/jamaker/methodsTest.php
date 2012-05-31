@@ -44,7 +44,7 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 
 		$user = Jamaker::build('jamaker_user', array('email' => 'test@example.com', 'last_name' => 'Oliver'));
 
-		$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jelly_Model object');
+		$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jam_Model object');
 		$this->assertFalse($user->loaded(), 'User should not be loaded with build');
 		$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Oliver', 'email' => 'test@example.com'), $user, 'Should set attributes for build, and use overrides');
 
@@ -75,7 +75,7 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 
 		$user = Jamaker::create('jamaker_user', array('email' => 'test@example.com', 'last_name' => 'Oliver'));
 
-		$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jelly_Model object');
+		$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jam_Model object');
 		$this->assertTrue($user->loaded(), 'User should be loaded with build');
 		$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Oliver', 'email' => 'test@example.com'), $user, 'Should set attributes for build, and use overrides');
 
@@ -100,7 +100,7 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 
 		foreach ($users as $i => $user) 
 		{
-			$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jelly_Model object');
+			$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jam_Model object');
 			$this->assertFalse($user->loaded(), 'User should be loaded with build_list');
 			$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Oliver', 'email' => 'test@example.com', 'username' => $usernames[$i]), $user, 'Should set attributes for build_list, and use overrides');
 		}
@@ -120,7 +120,7 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 
 		foreach ($users as $user) 
 		{
-			$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jelly_Model object');
+			$this->assertInstanceOf('Model_Jamaker_User', $user, 'Should build the right Jam_Model object');
 			$this->assertTrue($user->loaded(), 'User should be loaded with build_list');
 			$this->assertAttributes(array('first_name' => 'John', 'last_name' => 'Oliver', 'email' => 'test@example.com'), $user, 'Should set attributes for build_list, and use overrides');
 		}
