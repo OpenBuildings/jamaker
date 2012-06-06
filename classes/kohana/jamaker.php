@@ -472,7 +472,6 @@ abstract class Kohana_Jamaker {
 		$attributes = $this->attributes;
 
 		$overrides = Jamaker_Attribute::convert_all($this, (array) $overrides, $strategy);
-		
 		$attributes = Jamaker_Attribute::merge($attributes, $overrides);
 
 		// Generate all static attributes
