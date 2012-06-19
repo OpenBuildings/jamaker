@@ -80,7 +80,7 @@ abstract class Kohana_Jamaker {
 	}
 
 	/**
-	 * * Clear all definitions. Useful for testing
+	 * Clear all definitions. Useful for testing
 	 * @param  array $_factories Specifically what factories to remove
 	 * @return NULL
 	 */
@@ -234,7 +234,7 @@ abstract class Kohana_Jamaker {
 	}
 
 	/**
-	 * Shorthand for Jamaker::build_list('build', $factory, $count, $overrides);
+	 * Shorthand for Jamaker::generate_list('build', $factory, $count, $overrides);
 	 * @param  string  $factory
 	 * @param  integer $count
 	 * @param  array   $overrides 
@@ -246,7 +246,7 @@ abstract class Kohana_Jamaker {
 	}
 
 	/**
-	 * Shorthand for Jamaker::create_list('build', $factory, $count, $overrides);
+	 * Shorthand for Jamaker::generate_list('build', $factory, $count, $overrides);
 	 * @param  string  $factory
 	 * @param  integer $count
 	 * @param  array   $overrides 
@@ -323,7 +323,7 @@ abstract class Kohana_Jamaker {
 	}
 
 	/**
-	 * Shorthand for Jamaker_Callback($event.'.before', $callback);
+	 * Shorthand for new Jamaker_Trait($name, $attributes);
 	 * @param  string  $event'
 	 * @param  Closure  $callback
 	 * @return Jamaker_Callback
