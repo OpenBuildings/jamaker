@@ -12,38 +12,31 @@ abstract class Kohana_Jamaker_Cleaner {
 	const TRUNCATE = 'truncate';
 	const DELETE = 'delete';
 	const TRANSACTION = 'transaction';
-	const PURGE = 'purge';
 	const NULL = 'null';
 
-	protected static $strategy;
-	protected static $database;
-
-	protected static $_tables = array();
-	protected static $_bound = FALSE;
+	protected static $_strategy;
+	protected static $_database;
 
 	protected static $_started = FALSE;
+	protected static $_saved = FALSE;
 
 	public static function start($strategy = 'null', $database = 'default')
 	{
-		$allowed_strategies = array(Jamaker_Cleaner::TRUNCATE, Jamaker_Cleaner::DELETE, Jamaker_Cleaner::TRANSACTION, Jamaker_Cleaner::NULL, Jamaker_Cleaner::PURGE);
+		$allowed_strategies = array(Jamaker_Cleaner::TRUNCATE, Jamaker_Cleaner::DELETE, Jamaker_Cleaner::TRANSACTION, Jamaker_Cleaner::NULL);
 
 		if ( ! in_array($strategy, $allowed_strategies))
 			throw new Kohana_Exception('Strategy ":strategy" is not allowed, must be one of :strategies', array(':strategy' => $strategy, ':strategies' => join(', ', $allowed_strategies)));
 
-		Jamaker_Cleaner::$strategy = $strategy;
-		Jamaker_Cleaner::$database = $database;
+		Jamaker_Cleaner::$_strategy = $strategy;
+		Jamaker_Cleaner::$_database = $database;
 
-		if (Jamaker_Cleaner::$strategy == Jamaker_Cleaner::TRANSACTION)
+		if (Jamaker_Cleaner::$_strategy == Jamaker_Cleaner::TRANSACTION)
 		{
-			Database::instance(Jamaker_Cleaner::$database)->begin();
-		}
-		elseif ( ! Jamaker_Cleaner::$_bound)
-		{
-			Jam::global_bind('builder.after_insert', 'Jamaker_Cleaner::log_table');
-			Jamaker_Cleaner::$_bound = TRUE;
+			Database::instance(Jamaker_Cleaner::$_database)->begin();
 		}
 
 		Jamaker_Cleaner::started(TRUE);
+		Jamaker_Cleaner::saved(FALSE);
 	}
 
 	public static function started($started = NULL)
@@ -56,6 +49,17 @@ abstract class Kohana_Jamaker_Cleaner {
 		return Jamaker_Cleaner::$_started;
 	}
 
+	public static function saved($saved = NULL)
+	{
+		if ($saved !== NULL)
+		{
+			Jamaker_Cleaner::$_saved = $saved;
+		}
+		
+		return Jamaker_Cleaner::$_saved;
+	}
+
+
 	public static function started_insist()
 	{
 		if ( ! Jamaker_Cleaner::$_started)
@@ -64,39 +68,37 @@ abstract class Kohana_Jamaker_Cleaner {
 		return TRUE;
 	}
 
-	public static function log_table($builder)
-	{
-		$table = Arr::path($builder->inspect('from'), '0.0');
-
-		if ( ! in_array($table, Jamaker_Cleaner::$_tables))
-		{
-			Jamaker_Cleaner::$_tables[] = $table;
-		}
-	}
-
 	public static function save()
 	{
 		Jamaker_Cleaner::started_insist();
+		Jamaker_Cleaner::saved(TRUE);
 
-		if (Jamaker_Cleaner::$strategy == Jamaker_Cleaner::TRANSACTION)
+
+		if (Jamaker_Cleaner::$_strategy == Jamaker_Cleaner::TRANSACTION)
 		{
-			Database::instance(Jamaker_Cleaner::$database)->commit();
-		}
-		else
-		{
-			Jamaker_Cleaner::$_tables = array();
+			Database::instance(Jamaker_Cleaner::$_database)->commit();
 		}
 	}
 
-	public static function clean_all()
+	public static function tables()
 	{
-		$all_tables = Database::instance(Jamaker_Cleaner::$database)->list_tables();
-		foreach ($all_tables as $table) 
+		$tables = Database::instance(Jamaker_Cleaner::$_database)->list_tables();
+
+		if (($key = array_search('schema_version', $tables)) !== FALSE)
 		{
-			if ($table != 'schema_version')
-			{
-				DB::query(NULL, "TRUNCATE `$table`")->execute(Jamaker_Cleaner::$database);
-			}
+			unset($tables[$key]);
+		}
+
+		return $tables;
+	}
+
+	public static function purge()
+	{
+		Jamaker_Cleaner::$_saved = FALSE;
+
+		foreach (Jamaker_Cleaner::tables() as $table) 
+		{
+			DB::query(NULL, "TRUNCATE `$table`")->execute(Jamaker_Cleaner::$_database);
 		}
 	}
 
@@ -104,31 +106,33 @@ abstract class Kohana_Jamaker_Cleaner {
 	{
 		Jamaker_Cleaner::started_insist();
 
-		switch (Jamaker_Cleaner::$strategy) 
+		switch (Jamaker_Cleaner::$_strategy) 
 		{
 			case Jamaker_Cleaner::TRANSACTION:
-				Database::instance(Jamaker_Cleaner::$database)->rollback();
+				Database::instance(Jamaker_Cleaner::$_database)->rollback();
 			break;
 
 			case Jamaker_Cleaner::TRUNCATE:
-				foreach (Jamaker_Cleaner::$_tables as $table) 
+				if ( ! Jamaker_Cleaner::saved())
 				{
-					DB::query(NULL, "TRUNCATE `$table`")->execute(Jamaker_Cleaner::$database);
+					foreach (Jamaker_Cleaner::tables() as $table) 
+					{
+						DB::query(NULL, "TRUNCATE `$table`")->execute(Jamaker_Cleaner::$_database);
+					}
 				}
 			break;
 			
 			case Jamaker_Cleaner::DELETE:
-				foreach (Jamaker_Cleaner::$_tables as $table) 
+				if ( ! Jamaker_Cleaner::saved())
 				{
-					DB::query(NULL, "DELETE FROM `$table`")->execute(Jamaker_Cleaner::$database);
+					foreach (Jamaker_Cleaner::tables() as $table) 
+					{
+						DB::query(NULL, "DELETE FROM `$table`")->execute(Jamaker_Cleaner::$_database);
+					}
 				}
 			break;
-
-			case Jamaker_Cleaner::PURGE:
-				Jamaker_Cleaner::clean_all();
-			break;
 		}
-		Jamaker_Cleaner::$_tables = array();
+		Jamaker_Cleaner::saved(FALSE);
 	}
 
 } // End Role Model
