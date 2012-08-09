@@ -13,7 +13,7 @@ class Model_Jamaker_User extends Jam_Model {
 
 		$meta->fields(array(
 			'id' => Jam::field('primary'),
-			'email' => Jam::field('email'),
+			'email' => Jam::field('string'),
 			'first_name' => Jam::field('string'),
 			'last_name' => Jam::field('string'),
 			'admin' => Jam::field('boolean'),

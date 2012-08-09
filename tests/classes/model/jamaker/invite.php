@@ -12,7 +12,7 @@ class Model_Jamaker_Invite extends Jam_Model {
 
 		$meta->fields(array(
 			'id' => Jam::field('primary'),
-			'email' => Jam::field('email'),
+			'email' => Jam::field('string'),
 			'approved_at' => Jam::field('timestamp'),
 		));
 	}
