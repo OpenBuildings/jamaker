@@ -31,4 +31,5 @@ jamaker is maintained and funded by [OpenBuildings, Inc](http://openbuildings.co
 License
 -------
 
-jamaker is Copyright © 2012 Ivan Kerin and OpenBuildings. It is free software, and may be redistributed under the terms specified in the LICENSE file.
+jamaker is Copyright © 2012 OpenBuildings Inc, developed by Ivan Kerin. It is free software, and may be redistributed under the terms specified in the LICENSE file.
+
