@@ -24,12 +24,12 @@ More Information
 Credits
 -------
 
-jamaker was originally written by Ivan Kerin.
+jamaker was written by Ivan Kerin.
 
-jamaker is maintained and funded by [OpenBuildings, Inc](http://openbuildings.com)
+jamaker is maintained and funded by [Despark Ltd.](http://despark.com)
 
 License
 -------
 
-jamaker is under Copyright © 2012 OpenBuildings Inc, developed by Ivan Kerin. It is free software, and may be redistributed under the terms specified in the LICENSE file.
+jamaker is under Copyright © 2012 Despark Ltd. developed by Ivan Kerin. It is free software, and may be redistributed under the terms specified in the LICENSE file.
 
