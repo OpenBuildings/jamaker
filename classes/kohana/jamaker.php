@@ -134,7 +134,7 @@ abstract class Kohana_Jamaker {
 	 * @param  array $overrides  Use this to apply last-minute attributes to the generated item. Will overwrite any previous attributes with the same names
 	 * @return array             An array of attributes for the item.
 	 */
-	static public function attributes_for($name, array $overrides = NULL, $strategy = 'build')
+	static public function attributes_for($name, array $overrides = array(), $strategy = 'build')
 	{
 		$attributes = Jamaker::factories($name)->attributes($overrides, $strategy);
 		Jamaker_Attribute::extract_callbacks($attributes);
@@ -150,7 +150,7 @@ abstract class Kohana_Jamaker {
 	 * @param  array $overrides  Use this to apply last-minute attributes to the generated item. Will overwrite any previos attributes with the same names
 	 * @return mixed             The resulting object, Jell_Model
 	 */
-	static public function generate($strategy, $name, array $overrides = NULL)
+	static public function generate($strategy, $name, array $overrides = array())
 	{
 		$factory = Jamaker::factories($name);
 		$class = $factory->item_class();
@@ -194,8 +194,11 @@ abstract class Kohana_Jamaker {
 	 * @param  array  $overrides use this to apply last-minute attributes to the generated item. Will overwrite any previous attributes with the same names
 	 * @return array             an array of item objects
 	 */
-	static public function generate_list($strategy, $factory, $count, array $overrides = NULL)
+	static public function generate_list($strategy, $factory, $count, array $overrides = array())
 	{
+		if ( ! is_numeric($count))
+			throw new Kohana_Exception("count of objects to generate should be numeric");
+			
 		$list = array();
 
 		if ($overrides)
@@ -217,7 +220,7 @@ abstract class Kohana_Jamaker {
 	 * @param  array  $overrides 
 	 * @return mixed
 	 */
-	static public function build($factory, array $overrides = NULL)
+	static public function build($factory, array $overrides = array())
 	{
 		return Jamaker::generate('build', $factory, $overrides);
 	}
@@ -228,7 +231,7 @@ abstract class Kohana_Jamaker {
 	 * @param  array  $overrides 
 	 * @return mixed
 	 */
-	static public function create($factory, array $overrides = NULL)
+	static public function create($factory, array $overrides = array())
 	{
 		return Jamaker::generate('create', $factory, $overrides);
 	}
@@ -240,7 +243,7 @@ abstract class Kohana_Jamaker {
 	 * @param  array   $overrides 
 	 * @return mixed
 	 */
-	static public function build_list($factory, $count, array $overrides = NULL)
+	static public function build_list($factory, $count, array $overrides = array())
 	{
 		return Jamaker::generate_list('build', $factory, $count, $overrides);
 	}
@@ -252,7 +255,7 @@ abstract class Kohana_Jamaker {
 	 * @param  array   $overrides 
 	 * @return mixed
 	 */
-	static public function create_list($factory, $count, $overrides = NULL)
+	static public function create_list($factory, $count, array $overrides = array())
 	{
 		return Jamaker::generate_list('create', $factory, $count, $overrides);
 	}
@@ -264,7 +267,7 @@ abstract class Kohana_Jamaker {
 	 * @param  array  $overrides
 	 * @return Jamaker_Attribute_Association
 	 */
-	static public function association($factory, array $overrides = NULL, $strategy = NULL)
+	static public function association($factory, array $overrides = array(), $strategy = NULL)
 	{
 		return new Jamaker_Attribute_Association($factory, $overrides, $strategy);
 	}
