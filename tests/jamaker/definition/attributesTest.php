@@ -38,18 +38,15 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 			'id' => Jamaker::sequence(),
 
 			// Sequence with initial parameter
-			'first_name' => Jamaker::sequence('Name$n', 10),
+			'first_name' => Jamaker::sequence('Name$n'),
 
 			// Sequence of arrays, will loop through them continuously
 			'last_name' => Jamaker::sequence(array('Fam1', 'Fam2', 'Fam3')),
 
-			// Sequence with a callback
-			'email' => Jamaker::sequence(function($n){ return 'me'.$n.'@example.com'; }),
-
 			// Shorthand string sequence
 			'username' => 'user-$n',
 
-			'admin' => array(TRUE, FALSE)
+			'admin' => Jamaker::sequence(array(TRUE, FALSE))
 		));
 
 		$user_maker = array(
@@ -61,36 +58,32 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 
 		$this->assertAttributes(array(
 			'id' => 1, 
-			'first_name' => 'Name10', 
+			'first_name' => 'Name1', 
 			'last_name' => 'Fam1', 
-			'email' => 'me1@example.com', 
 			'username' => 'user-1', 
 			'admin' => TRUE, 
 		), $user_maker[0]);
 
 		$this->assertAttributes(array(
 			'id' => 2, 
-			'first_name' => 'Name11', 
+			'first_name' => 'Name2', 
 			'last_name' => 'Fam2', 
-			'email' => 'me2@example.com', 
 			'username' => 'user-2', 
 			'admin' => FALSE, 
 		), $user_maker[1]);
 
 		$this->assertAttributes(array(
 			'id' => 3, 
-			'first_name' => 'Name12', 
+			'first_name' => 'Name3', 
 			'last_name' => 'Fam3', 
-			'email' => 'me3@example.com', 
 			'username' => 'user-3', 
 			'admin' => TRUE, 
 		), $user_maker[2]);
 
 		$this->assertAttributes(array(
 			'id' => 4, 
-			'first_name' => 'Name13', 
+			'first_name' => 'Name4', 
 			'last_name' => 'Fam1', 
-			'email' => 'me4@example.com', 
 			'username' => 'user-4', 
 			'admin' => FALSE, 
 		), $user_maker[3]);
@@ -101,12 +94,12 @@ class Jamaker_Definition_AttributesTest extends Unittest_Jamaker_TestCase {
 	{
 		Jamaker::define('jamaker_user', array(
 			'id' => 10,
-			'first_name' => function($attrs){ return $attrs['id'].' clusure'; },
+			'first_name' => function($attrs, $itteration){ return $attrs['id'].' clusure '.$itteration; },
 			'last_name' => 'Jamaker_Definition_AttributesTest::_test_dynamic_call',
 		));
 
 		$user = Jamaker::build('jamaker_user');
-		$this->assertAttributes(array('id' => 10, 'first_name' => '10 clusure', 'last_name' => '10 method 10 clusure' ), $user);
+		$this->assertAttributes(array('id' => 10, 'first_name' => '10 clusure 1', 'last_name' => '10 method 10 clusure 1' ), $user);
 	}
 
 	static public function _test_dynamic_call($attrs)

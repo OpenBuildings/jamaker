@@ -22,9 +22,9 @@ class Kohana_Jamaker_Attribute_Dynamic extends Jamaker_Attribute {
 	 * 
 	 * @return mixed 
 	 */
-	public function generate($attributes = NULL)
+	public function generate($attributes = NULL, $iteration = 1)
 	{
-		return call_user_func($this->callback, $attributes);
+		return call_user_func($this->callback, $attributes, $iteration);
 	}
 
 	public function is_callable()

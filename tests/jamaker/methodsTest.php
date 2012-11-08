@@ -94,7 +94,7 @@ class Jamaker_MethodsTest extends Unittest_Jamaker_TestCase {
 
 		$usernames = array('username1', 'username2', 'username3', 'username4', 'username5', 'username6', 'username7', 'username8', 'username9', 'username10');
 
-		$users = Jamaker::build_list('jamaker_user', 10, array('email' => 'test@example.com', 'last_name' => 'Oliver', 'username' => $usernames));
+		$users = Jamaker::build_list('jamaker_user', 10, array('email' => 'test@example.com', 'last_name' => 'Oliver', 'username' => Jamaker::sequence($usernames)));
 
 		$this->assertCount(10, $users, 'Should build 10 users objects');
 

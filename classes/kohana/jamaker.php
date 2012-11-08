@@ -278,7 +278,7 @@ abstract class Kohana_Jamaker {
 	 * @param  integer $initial default to 1
 	 * @return Jamaker_Attribute_Sequence
 	 */
-	static public function sequence($iterator = NULL, $initial = 1)
+	static public function sequence($iterator = NULL, $initial = NULL)
 	{
 		return new Jamaker_Attribute_Sequence($iterator, $initial);
 	}
@@ -379,6 +379,8 @@ abstract class Kohana_Jamaker {
 	 * @var Jam_Event
 	 */
 	protected $_events;
+
+	protected $_iteration = 1;
 
 	/**
 	 * Will be set to true after initialize() so that initialize will not be repeated
@@ -482,7 +484,7 @@ abstract class Kohana_Jamaker {
 		{
 			if (($value instanceof Jamaker_Attribute) AND ! $value->is_callable())
 			{
-				$value = $value->generate($attributes);
+				$value = $value->generate($attributes, $this->_iteration);
 			}
 		}
 
@@ -491,9 +493,11 @@ abstract class Kohana_Jamaker {
 		{
 			if ($value instanceof Jamaker_Attribute)
 			{
-				$value = $value->generate($attributes);
+				$value = $value->generate($attributes, $this->_iteration);
 			}
 		}
+
+		$this->_iteration ++;
 
 		return $attributes;
 	}
@@ -566,6 +570,11 @@ abstract class Kohana_Jamaker {
 	public function name()
 	{
 		return $this->name;
+	}
+
+	public function iteration()
+	{
+		return $this->_iteration;
 	}
 
 } // End Role Model

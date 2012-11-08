@@ -11,9 +11,9 @@
 class Kohana_Jamaker_Attribute_Sequence extends Jamaker_Attribute {
 
 	protected $iterator;
-	protected $current = 1;
+	protected $current = NULL;
 
-	function __construct($iterator = NULL, $initial = 1)
+	function __construct($iterator = NULL, $initial = NULL)
 	{
 		$this->iterator = $iterator;
 		$this->current = $initial;
@@ -24,33 +24,29 @@ class Kohana_Jamaker_Attribute_Sequence extends Jamaker_Attribute {
 	 * 
 	 * @return mixed 
 	 */
-	public function generate($attributes = NULL)
+	public function generate($attributes = NULL, $iteration = 1)
 	{
+		$current = ($this->current !== NULL) ? $this->current++ : $iteration;
+
 		if ( ! $this->iterator)
 		{
-			$value = $this->current;
+			$value = $current;
 		}
 		elseif (is_array($this->iterator) OR ($this->iterator instanceof ArrayAccess AND $this->iterator instanceof Countable)) 
 		{
-			$value = $this->iterator[($this->current-1) % count($this->iterator)];
+			$value = $this->iterator[($current-1) % count($this->iterator)];
 		}
 		elseif (is_string($this->iterator)) 
 		{
-			$value = str_replace('$n', $this->current, $this->iterator);
+			$value = str_replace('$n', $current, $this->iterator);
 		}
-		elseif (is_callable($this->iterator))
-		{
-			$value = call_user_func($this->iterator, $this->current, $attributes);
-		}
-
-		$this->current++;
 
 		return $value;
 	}
 
 	public function is_callable()
 	{
-		return is_callable($this->iterator);
+		return FALSE;
 	}
 
 } // End Role Model
